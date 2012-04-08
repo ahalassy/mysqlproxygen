@@ -1,0 +1,10 @@
+
+# Directories:
+bin/
+obj/
+
+# Specific files:
+*.cache
+*.suo
+
+# EOF

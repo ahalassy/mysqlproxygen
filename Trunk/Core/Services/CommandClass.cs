@@ -24,6 +24,14 @@ namespace MySqlDevTools.Services
 {
     public abstract class CommandClass
     {
+        private static bool _verbose = false;
+
+        public static bool Verbose
+        {
+            get { return _verbose; }
+            set { _verbose = value; }
+        }
+
         public static void ExecuteCommand(Type commandType)
         {
             ExecuteCommand(commandType, null, null);
@@ -55,7 +63,8 @@ namespace MySqlDevTools.Services
             try
             {
                 Success = false;
-                Console.WriteLine("Command \"{0}\" started ...", CommandName);
+                if (Verbose)
+                    Console.WriteLine("Command \"{0}\" started ...", CommandName);
                 Success = CoreMethod();
             }
             catch
@@ -65,7 +74,8 @@ namespace MySqlDevTools.Services
             }
             finally
             {
-                Console.WriteLine("Command \"{0}\" {1}.", CommandName, Success ? "succeeded" : "failed");
+                if (Verbose)
+                    Console.WriteLine("Command \"{0}\" {1}.", CommandName, Success ? "succeeded" : "failed");
                 Release();
             }
         }

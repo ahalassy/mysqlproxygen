@@ -24,13 +24,17 @@ namespace MySqlDevTools.Documents
     public struct MySqlMacro
     {
         private string
+            _content,
             _name;
 
         public string Name { get { return _name; } }
 
-        public MySqlMacro(string name)
+        public string Content { get { return _content; } }
+
+        public MySqlMacro(string name, string content)
         {
             _name = name;
+            _content = content;
         }
     }
 }

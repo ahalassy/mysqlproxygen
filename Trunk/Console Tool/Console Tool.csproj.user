@@ -1,5 +1,5 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <StartArguments>push --source e:\Repo\MySQLDevTools\Examples\SampleProc.mysproc</StartArguments>
+    <StartArguments>push --source ..\..\..\..\Examples\SampleProc.mysproc --verbose</StartArguments>
   </PropertyGroup>
 </Project>

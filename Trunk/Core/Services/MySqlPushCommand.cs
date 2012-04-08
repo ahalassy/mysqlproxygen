@@ -31,7 +31,8 @@ namespace MySqlDevTools.Services
             CommandLineArg fileNameArg = CommandLineArguments.GetArgument("-s", "--source");
             string fileName = fileNameArg.IsDefined ? fileNameArg.Value : null;
 
-            Console.WriteLine("Parse file {0}", fileName);
+            if (Verbose)
+                Console.WriteLine("Parse file {0}", fileName);
 
             MySqlCodeDoc codeDoc = new MySqlCodeDoc(fileName);
             codeDoc.ProcessCode();

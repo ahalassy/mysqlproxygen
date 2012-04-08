@@ -26,15 +26,23 @@ namespace MySqlDevTools.Documents
     {
         public static bool IsPreprocessorDirective(string ln)
         {
+            if (String.IsNullOrEmpty(ln) || String.IsNullOrEmpty(ln.TrimStart()))
+                return false;
+
             return ln.TrimStart()[0] == '#';
         }
 
-        private bool
-            _ignore = false;
+        private int _currentLine;
 
         private List<MySqlMacro> _macros = new List<MySqlMacro>();
 
+        private MySqlMacroModel _macroModel = new MySqlMacroModel();
+
         public string FileName { get; private set; }
+
+        public MySqlMacroModel MacroModel { get { return _macroModel; } }
+
+        internal int CurrentLine { get { return _currentLine; } }
 
         private bool IsDefined(string macroName)
         {
@@ -45,29 +53,37 @@ namespace MySqlDevTools.Documents
             return false;
         }
 
-        private void DefineMacro(string name)
+        private bool IsDefined(PreprocessorDirective directive)
         {
-            _macros.Add(new MySqlMacro(name));
+            return IsDefined(directive.Directive);
         }
 
-        private void ProcessDirective(PreprocessorDirective directive)
+        private void InitializeDom()
         {
-            switch (directive.Directive)
-            {
-                case "define":
-                    break;
+            _macroModel.RegisterDirective("define", typeof(MacroDirective), new EventHandler(ehProcessMacro));
 
-                case "if": break;
-                case "else": break;
-                case "elif": break;
-                case "endif": break;
+            //_macroModel.RegisterDirective("undefine", typeof(MacroDirective), new EventHandler(ehProcessMacro));
+            //_macroModel.RegisterDirective("if", typeof(MacroDirective), new EventHandler(ehProcessMacro));
+            //_macroModel.RegisterDirective("ifnot", typeof(MacroDirective), new EventHandler(ehProcessMacro));
+            //_macroModel.RegisterDirective("elif", typeof(MacroDirective), new EventHandler(ehProcessMacro));
+            //_macroModel.RegisterDirective("message", typeof(MacroDirective), new EventHandler(ehProcessMacro));
+            //_macroModel.RegisterDirective("warning", typeof(MacroDirective), new EventHandler(ehProcessMacro));
+        }
 
-                case "include": break;
-            }
+        private void DefineMacro(string name, string content)
+        {
+            _macros.Add(new MySqlMacro(name, content));
+        }
+
+        private void DefineMacro(MacroDirective directive)
+        {
+            DefineMacro(directive.MacroName, directive.MacroContent);
         }
 
         public void ProcessCode()
         {
+            MacroModel.CodeDocument = this;
+            _currentLine = 1;
             _macros.Clear();
             StreamReader reader = new StreamReader(FileName);
 
@@ -75,13 +91,24 @@ namespace MySqlDevTools.Documents
             while ((ln = reader.ReadLine()) != null)
             {
                 if (IsPreprocessorDirective(ln))
-                    ProcessDirective(new PreprocessorDirective(ln));
+                    MacroModel.Process(ln);
+
+                _currentLine++;
             }
         }
 
         public MySqlCodeDoc(string fileName)
         {
             this.FileName = fileName;
+
+            InitializeDom();
+        }
+
+        private void ehProcessMacro(object sender, EventArgs args)
+        {
+            MacroDirective directive = sender as MacroDirective;
+            if (directive != null)
+                DefineMacro(directive);
         }
 
     }

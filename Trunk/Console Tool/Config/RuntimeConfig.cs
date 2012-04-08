@@ -34,6 +34,11 @@ namespace MySqlDevTools.Config
 
         public const string ProxyGenCommand = "proxygen";
 
+        public static bool IsVerbose
+        {
+            get { return CommandLineArguments.GetArgument("-v", "--verbose").IsDefined; }
+        }
+
         public static ToolCommand Command
         {
             get

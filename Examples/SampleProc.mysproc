@@ -1,0 +1,11 @@
+#define __sample_def
+
+#message Ez egy üzenet
+#warning Ez egy figyelmeztetés
+#error Ez egy hiba
+
+#ifdef __sample_def
+
+#endif
+
+--eof

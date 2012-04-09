@@ -64,8 +64,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Documents\Directives\ConditionalDirectives.cs" />
     <Compile Include="Documents\Directives\MessageDirective.cs" />
     <Compile Include="Documents\EventHandlers.cs" />
+    <Compile Include="Documents\Exceptions.cs" />
     <Compile Include="Documents\InvalidDirectiveException.cs" />
     <Compile Include="Documents\Directives\MacroDirective.cs" />
     <Compile Include="Documents\MySqlCodeDoc.cs" />
@@ -73,6 +75,7 @@
     <Compile Include="Documents\Directives\PreprocessorDirective.cs" />
     <Compile Include="Documents\Structs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System\OutputWriter.cs" />
     <Compile Include="System\Reflection\TypeExtensions.cs" />
     <Compile Include="Services\CommandClass.cs" />
     <Compile Include="Services\MySqlDebugCommand.cs" />

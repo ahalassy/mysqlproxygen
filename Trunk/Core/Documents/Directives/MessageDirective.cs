@@ -8,9 +8,9 @@ namespace MySqlDevTools.Documents.Directives
     public class MessageDirective : PreprocessorDirective
     { }
 
-    public class WarningDirective : PreprocessorDirective
+    public class WarningDirective : MessageDirective
     { }
 
-    public class ErrorDirective : PreprocessorDirective
+    public class ErrorDirective : WarningDirective
     { }
 }

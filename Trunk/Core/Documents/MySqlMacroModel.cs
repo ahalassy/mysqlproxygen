@@ -41,6 +41,11 @@ namespace MySqlDevTools.Documents
 
             public Type DirectiveType { get { return IsBlank ? null : _directiveType; } }
 
+            public override string ToString()
+            {
+                return String.Format("{0} handled by {1}", Directive, DirectiveType.FullName);
+            }
+
             public DirectiveAssignment(string directive, Type directiveType, EventHandler handler)
             {
                 _blank = false;
@@ -85,6 +90,7 @@ namespace MySqlDevTools.Documents
                     PreprocessorDirective result = assignment.DirectiveType.CreateInstance() as PreprocessorDirective;
                     if (result != null)
                     {
+                        result.Initialize(ln);
                         result.ProcessDirective += assignment.Handler;
                         return result;
                     }

@@ -1,10 +1,40 @@
-#define __sample_def
+﻿#define __sample_def
 
-#message Ez egy �zenet
-#warning Ez egy figyelmeztet�s
-#error Ez egy hiba
+-- FEJLÉC
 
 #ifdef __sample_def
+#message SampleDef definiálva
+-- Ennek meg kell jelennie
+
+#ifndef __sample_def
+#message SampleDef nincs definiálva
+
+#elifndef __majom
+#message Majom nincs definiálva
+
+#else
+#message Semmi sincs definiálva
+
+#endif
+
+#elif __majom
+#message Majom definiálva
+
+#else
+#message Semmi sincs definiálva
+
+#endif
+
+#include SampleInclude.i
+
+#ifndef __sample_def
+#message SampleDef nincs definiálva
+
+#elifndef __majom
+#message Majom nincs definiálva
+
+#else
+#message Semmi sincs definiálva
 
 #endif
 

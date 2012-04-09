@@ -40,7 +40,7 @@ namespace MySqlDevTools
         static void Main(string[] args)
         {
             if (RuntimeConfig.IsVerbose)
-                System.Console.WriteLine(Directory.GetCurrentDirectory());
+                Console.WriteLine(Directory.GetCurrentDirectory());
             Initialize();
             try
             {

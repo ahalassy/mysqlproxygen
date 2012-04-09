@@ -48,12 +48,8 @@ namespace MySqlDevTools.Documents
         {
             int sepPos = DirectiveLine.IndexOf(' ');
 
-            _directive = sepPos < 0 ? DirectiveLine.Substring(1) : DirectiveLine.Substring(1, sepPos);
+            _directive = sepPos < 0 ? DirectiveLine.Substring(1) : DirectiveLine.Substring(1, sepPos - 1);
             _args = sepPos < 0 ? "" : DirectiveLine.Substring(sepPos).Trim();
-
-            if (Verbose)
-                System.Console.WriteLine("Parse directive {0}, arguments: \"{1}\"", Directive, Arguments);
-
         }
 
         internal void InvokeProcess()

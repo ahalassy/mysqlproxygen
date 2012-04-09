@@ -20,6 +20,8 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using MySqlDevTools.Documents.Directives;
+using MySqlDevTools.Services;
+using System.Text.RegularExpressions;
 
 namespace MySqlDevTools.Documents
 {
@@ -49,6 +51,9 @@ namespace MySqlDevTools.Documents
 
         private int _currentLine;
 
+        private string
+            _routineName = null;
+
         private List<MySqlMacro> _macros = new List<MySqlMacro>();
 
         private MySqlMacroModel _macroModel = new MySqlMacroModel();
@@ -63,9 +68,19 @@ namespace MySqlDevTools.Documents
 
         public ProcessStackFrame TopFrame { get { return _stack[_stack.Count - 1]; } }
 
+        public MySqlCodeDoc ParentDoc { get; private set; }
+
+        //public string RoutineName 
+        //{
+        //    get { return ParentDoc != null ? ParentDoc.RoutineName : _routineName; }
+        //    private set { _routineName = value; }
+        //}
+
         internal int CurrentLine { get { return _currentLine; } }
 
         internal string WorkingDir { get { return Path.GetDirectoryName(FileName); } }
+
+        private StringWriter CodeWriter { get; set; }
 
         private void OpenStackFrame()
         {
@@ -115,7 +130,10 @@ namespace MySqlDevTools.Documents
 
         private void DefineMacro(string name, string content)
         {
-            _macros.Add(new MySqlMacro(name, content));
+            if (ParentDoc != null)
+                ParentDoc.DefineMacro(name, content);
+            else
+                _macros.Add(new MySqlMacro(name, content));
         }
 
         private void DefineMacro(MacroDirective directive)
@@ -141,10 +159,10 @@ namespace MySqlDevTools.Documents
                 string ln = null;
                 while ((ln = CurrentReader.ReadLine()) != null)
                 {
-                    ln = ApplyMacros(ln);
-
                     if (IsPreprocessorDirective(ln))
                         MacroModel.Process(ln);
+                    else if (!TopFrame.Ignore)
+                        CodeWriter.WriteLine(ApplyMacros(ln));
 
                     _currentLine++;
                 }
@@ -159,14 +177,86 @@ namespace MySqlDevTools.Documents
             }
         }
 
-        public void Process()
+        private void ValidateCode()
         {
-            MacroModel.CodeDocument = this;
-            _currentLine = 1;
-            _macros.Clear();
-            CurrentReader = new StreamReader(FileName);
+            if (ParentDoc != null)
+                return;
 
-            InternalProcessCode();
+            bool isProc = false;
+
+            string
+                procNameChars = "_abcdefghijklmnopqrstxyvwz0123456789",
+                whiteSpaces = " \t\n\r",
+                code = CodeWriter.ToString();
+
+            int defPos = code.ToUpper().IndexOf("CREATE");
+
+            if (defPos < 0)
+                throw new Exception("Source must contain \"CREATE PROCEDURE <proc_name>\" or \"CREATE FUNCTION <func_name>\" phrase!");
+
+            int routinePos = code.ToUpper().IndexOf("FUNCTION", defPos);
+            if (routinePos < 0)
+            {
+                isProc = true;
+                routinePos = code.ToUpper().IndexOf("PROCEDURE", defPos);
+            }
+
+            if (routinePos < 0)
+                throw new Exception("Source must contain \"CREATE PROCEDURE <proc_name>\" or \"CREATE FUNCTION <func_name>\" phrase!");
+
+            int pos;
+            for (pos = defPos + "CREATE".Length; pos < routinePos; pos++)
+                if (!whiteSpaces.Contains(code[pos]))
+                    throw new Exception("Source must contain \"CREATE PROCEDURE <proc_name>\" or \"CREATE FUNCTION <func_name>\" phrase!");
+
+            _routineName = "";
+            pos += isProc ? "PROCEDURE".Length : "FUNCTION".Length;
+            while (code.Length > pos && whiteSpaces.Contains(code[pos])) pos++;
+
+            while (code.Length > pos && (procNameChars.Contains(code[pos]) || procNameChars.ToUpper().Contains(code[pos])))
+            {
+                _routineName += code[pos].ToString();
+                pos++;
+            }
+
+            if (_routineName.ToUpper() != Path.GetFileNameWithoutExtension(FileName).ToUpper())
+                throw new Exception(
+                    String.Format(
+                        "Stored routine name \"{0}\" does not match file name {1}!", 
+                        _routineName, 
+                        Path.GetFileNameWithoutExtension(FileName)
+                        )
+                    );
+
+        }
+
+        public string Process()
+        {
+            try
+            {
+                MacroModel.CodeDocument = this;
+                _currentLine = 1;
+                _macros.Clear();
+                CurrentReader = new StreamReader(FileName);
+                CodeWriter = new StringWriter();
+
+                InternalProcessCode();
+            }
+            catch (CodeProcessException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new CodeProcessException(
+                    Path.GetFileName(FileName),
+                    CurrentLine,
+                    ex
+                    );
+            }
+
+            ValidateCode();
+            return CodeWriter.ToString();
         }
 
         public MySqlCodeDoc(string fileName)
@@ -288,7 +378,8 @@ namespace MySqlDevTools.Documents
             if (directive == null) return;
 
             MySqlCodeDoc codeDoc = new MySqlCodeDoc(Path.Combine(WorkingDir, directive.Arguments));
-            codeDoc.Process();
+            codeDoc.ParentDoc = this;
+            CodeWriter.WriteLine(codeDoc.Process());
         }
 
     }

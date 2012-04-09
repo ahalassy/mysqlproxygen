@@ -35,7 +35,10 @@ namespace MySqlDevTools.Services
                 Console.WriteLine("Parse file {0}", fileName);
 
             MySqlCodeDoc codeDoc = new MySqlCodeDoc(fileName);
-            codeDoc.Process();
+            Console.WriteLine(
+                "\nKód:\n\n{0}",
+                codeDoc.Process()
+                );
 
             return true;
         }

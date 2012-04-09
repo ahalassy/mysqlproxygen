@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using System.IO;
 
 namespace MySqlDevTools.Documents
 {
@@ -72,6 +73,8 @@ namespace MySqlDevTools.Documents
 
         public int CurrentLine { get { return CodeDocument == null ? -1 : CodeDocument.CurrentLine; } }
 
+        public string CurrentFile { get { return CodeDocument == null ? "" : Path.GetFileName(CodeDocument.FileName); } }
+
         internal MySqlCodeDoc CodeDocument { get; set; }
 
         public void RegisterDirective(string directive, Type directiveType, EventHandler handler)
@@ -105,7 +108,7 @@ namespace MySqlDevTools.Documents
             if (directive != null)
                 directive.InvokeProcess();
             else
-                throw new InvalidDirectiveException(String.Format("Unknown directive in line {0}", CurrentLine));
+                throw new InvalidDirectiveException("Unknown directive!");
 
         }
     }

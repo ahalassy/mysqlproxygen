@@ -1,41 +1,12 @@
 ﻿#define __sample_def
 
--- FEJLÉC
-
-#ifdef __sample_def
-#message SampleDef definiálva
--- Ennek meg kell jelennie
-
-#ifndef __sample_def
-#message SampleDef nincs definiálva
-
-#elifndef __majom
-#message Majom nincs definiálva
-
-#else
-#message Semmi sincs definiálva
-
-#endif
-
-#elif __majom
-#message Majom definiálva
-
-#else
-#message Semmi sincs definiálva
-
-#endif
+Create Function SampleProc;
 
 #include SampleInclude.i
 
-#ifndef __sample_def
-#message SampleDef nincs definiálva
+declare resval int init 0;
 
-#elifndef __majom
-#message Majom nincs definiálva
-
-#else
-#message Semmi sincs definiálva
-
-#endif
+set
+	resval = RESULT_OK;
 
 --eof

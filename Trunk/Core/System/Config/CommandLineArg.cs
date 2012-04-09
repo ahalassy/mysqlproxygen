@@ -58,6 +58,9 @@ namespace System.Config
             return new CommandLineArg(null, null);
         }
 
+        private string
+            _value = null;
+
         public static CommandLineParmKind DetermineParmKind(string name)
         {
             if (name.IndexOf("--") == 0) return CommandLineParmKind.LongForm;
@@ -66,7 +69,11 @@ namespace System.Config
             return CommandLineParmKind.Unknown;
         }
 
-        public string Value { get; private set; }
+        public string Value
+        {
+            get { return _value.Replace("\"", ""); }
+            private set { _value = value; }
+        }
 
         public string Name { get; private set; }
 

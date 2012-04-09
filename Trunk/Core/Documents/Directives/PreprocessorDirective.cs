@@ -46,7 +46,8 @@ namespace MySqlDevTools.Documents
 
         protected virtual void Parse()
         {
-            int sepPos = DirectiveLine.IndexOf(' ');
+            int
+                sepPos = DirectiveLine.IndexOfAny(new char[] { ' ', '\t' });
 
             _directive = sepPos < 0 ? DirectiveLine.Substring(1) : DirectiveLine.Substring(1, sepPos - 1);
             _args = sepPos < 0 ? "" : DirectiveLine.Substring(sepPos).Trim();

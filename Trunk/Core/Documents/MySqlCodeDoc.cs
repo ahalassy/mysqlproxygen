@@ -49,7 +49,11 @@ namespace MySqlDevTools.Documents
 
         }
 
-        private int _currentLine;
+        private bool
+            _wasDirective = false;
+
+        private int
+            _currentLine;
 
         private string
             _routineName = null;
@@ -61,6 +65,8 @@ namespace MySqlDevTools.Documents
         private List<ProcessStackFrame> _stack = new List<ProcessStackFrame>();
 
         private StreamReader CurrentReader { get; set; }
+
+        public bool SchemaDefinition { get; private set; }
 
         public string FileName { get; private set; }
 
@@ -124,6 +130,8 @@ namespace MySqlDevTools.Documents
 
             _macroModel.RegisterDirective("include", typeof(EndIfDirective), new EventHandler(ehProcessInclude));
 
+            _macroModel.RegisterDirective("schema", typeof(PreprocessorDirective), new EventHandler(ehSchemaMarker));
+
             // TODO: #include
             // TODO: #function 
             // TODO: #procedure
@@ -141,7 +149,7 @@ namespace MySqlDevTools.Documents
         {
             DefineMacro(directive.MacroName, directive.MacroContent);
         }
-
+        
         private string ApplyMacros(string ln)
         {
             if (ParentDoc != null)
@@ -149,7 +157,7 @@ namespace MySqlDevTools.Documents
 
             foreach (MySqlMacro macro in _macros)
                 if (!String.IsNullOrEmpty(macro.Content))
-                    ln = ln.Replace(macro.Name, macro.Content);
+                    ln = ln.WordReplace(macro.Name, macro.Content);
 
             return ln.Contains("--") ? ln.Substring(0, ln.IndexOf("--")) : ln;
         }
@@ -164,7 +172,10 @@ namespace MySqlDevTools.Documents
                 while ((ln = CurrentReader.ReadLine()) != null)
                 {
                     if (IsPreprocessorDirective(ln.TrimStart()))
+                    {
                         MacroModel.Process(ln.TrimStart());
+                        _wasDirective = true;
+                    }
                     else if (!TopFrame.Ignore)
                     {
                         ln = ApplyMacros(ln);
@@ -187,7 +198,7 @@ namespace MySqlDevTools.Documents
 
         private void ValidateCode()
         {
-            if (ParentDoc != null)
+            if (ParentDoc != null || SchemaDefinition)
                 return;
 
             RoutineType = RoutineType.Unknown;
@@ -244,6 +255,7 @@ namespace MySqlDevTools.Documents
             try
             {
                 MacroModel.CodeDocument = this;
+                SchemaDefinition = false;
                 _currentLine = 1;
                 _macros.Clear();
                 CurrentReader = new StreamReader(FileName);
@@ -267,7 +279,7 @@ namespace MySqlDevTools.Documents
 
             ValidateCode();
 
-            if (ParentDoc == null)
+            if (ParentDoc == null && !SchemaDefinition)
                 return String.Format(
                     RoutineType == RoutineType.Function ?
                         "DROP FUNCTION IF EXISTS {0};\n\n{1}" : "DROP PROCEDURE IF EXISTS {0};\n\n{1}",
@@ -403,6 +415,14 @@ namespace MySqlDevTools.Documents
             MySqlCodeDoc codeDoc = new MySqlCodeDoc(Path.Combine(WorkingDir, directive.Arguments));
             codeDoc.ParentDoc = this;
             CodeWriter.WriteLine(codeDoc.Process());
+        }
+
+        private void ehSchemaMarker(object sender, EventArgs args)
+        {
+            if (_wasDirective)
+                throw new Exception("Schema defintion marker must be the first preprocessor directive!");
+
+            SchemaDefinition = true;
         }
 
     }

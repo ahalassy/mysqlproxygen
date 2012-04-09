@@ -31,6 +31,11 @@ namespace MySqlDevTools.Documents
 
         public string Content { get { return _content; } }
 
+        public override string ToString()
+        {
+            return String.Format("{0} = \"{1}\"", Name, Content);
+        }
+
         public MySqlMacro(string name, string content)
         {
             _name = name;

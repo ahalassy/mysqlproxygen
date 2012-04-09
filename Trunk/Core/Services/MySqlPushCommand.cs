@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Config;
@@ -24,7 +25,7 @@ using MySql.Data.MySqlClient;
 
 using MySqlDevTools.Documents;
 using MySqlDevTools.Config;
-using System.IO;
+
 
 namespace MySqlDevTools.Services
 {

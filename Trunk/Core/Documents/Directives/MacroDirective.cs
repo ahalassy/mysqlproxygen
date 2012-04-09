@@ -15,7 +15,7 @@ namespace MySqlDevTools.Documents
         {
             base.Parse();
 
-            int sepPos = Arguments.IndexOf(' ');
+            int sepPos = Arguments.IndexOfAny(new char[] { ' ', '\t' });
             this.MacroName = sepPos < 0 ? Arguments.Trim() : Arguments.Substring(0, sepPos).Trim();
             this.MacroContent = sepPos < 0 ? "" : Arguments.Substring(sepPos).Trim();
         }

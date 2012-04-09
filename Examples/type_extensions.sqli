@@ -3,6 +3,14 @@
 
 -- This include defines some of the most common types as a macro
 
-#define string VARCHAR(256)
+#define long_string		VARCHAR(1024)
+#define key_string_fld 	VARCHAR(16) NOT NULL
+#define string 			VARCHAR(256)
+
+#define recid_fld		INT NOT NULL AUTO_INCREMENT
+#define recid			INT
+
+-- Help table definitions:
+#define TABLE_DEFAULTS ENGINE=InnoDB DEFAULT CHARSET=utf8
 
 #endif

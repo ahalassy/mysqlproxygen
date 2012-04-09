@@ -1,0 +1,16 @@
+#schema
+
+#include type_extensions.sqli
+
+DROP TABLE IF EXISTS ac_mstr;
+CREATE TABLE ac_mstr (
+	ac_mstr_recid	recid_fld,
+	ac_domain 		key_string_fld,
+	ac_account 		key_string_fld,
+	ac_desc			long_string,
+	PRIMARY KEY ac_account (ac_domain, ac_account),
+	UNIQUE KEY ac_mstr_recid (ac_mstr_recid)
+	) TABLE_DEFAULTS;
+	
+
+-- EOF	

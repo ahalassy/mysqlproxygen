@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace System
 {
@@ -25,6 +26,11 @@ namespace System
         public static String Format(this string str, object[] args)
         {
             return String.Format(str, args);
+        }
+
+        public static string WordReplace(this string str, string oldstr, string newstr)
+        {
+            return Regex.Replace(str, String.Format("\\b{0}\\b", oldstr), newstr);
         }
 
     }

@@ -1,0 +1,10 @@
+#ifndef __sample_include
+#define __sample_include
+
+#include type_extensions.sqli
+
+#define RESULT_OK 0
+
+declare rsval string;
+
+#endif

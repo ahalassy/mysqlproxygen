@@ -54,6 +54,11 @@ namespace System.Config
             return Arguments[name].IsDefined;
         }
 
+        public static void DefineArg(CommandLineArg arg)
+        {
+            Arguments._parsedArgs.Add(arg);
+        }
+
         public static CommandLineArguments Arguments { get { return _args; } }
 
         public static CommandLineArg GetArgument(string shortForm, string longForm)

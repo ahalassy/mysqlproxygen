@@ -23,6 +23,19 @@ namespace System.Config
 {
     public class CommandLineArg
     {
+        internal static CommandLineArg ParseString(string str)
+        {
+            int
+                sepPos = str.IndexOf(' ');
+
+            string
+                name = sepPos < 0 ? str.Trim() : str.Substring(0, sepPos).Trim(),
+                value = sepPos < 0 ? null : str.Substring(sepPos).Trim();
+
+            return value == null ?
+                CreateSwitch(name) : CreateParm(name, value);
+        }
+
         internal static CommandLineArg CreateParm(string name, string value)
         {
             return new CommandLineArg(name, value);

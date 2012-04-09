@@ -20,7 +20,11 @@ using System.Linq;
 using System.Text;
 using System.Config;
 
+using MySql.Data.MySqlClient;
+
 using MySqlDevTools.Documents;
+using MySqlDevTools.Config;
+using System.IO;
 
 namespace MySqlDevTools.Services
 {
@@ -28,19 +32,51 @@ namespace MySqlDevTools.Services
     {
         protected override bool CoreMethod()
         {
-            CommandLineArg fileNameArg = CommandLineArguments.GetArgument("-s", "--source");
-            string fileName = fileNameArg.IsDefined ? fileNameArg.Value : null;
+            MySqlConnection connection = null;
 
-            if (Verbose)
-                Console.WriteLine("Parse file {0}", fileName);
+            try
+            {
+                CommandLineArg
+                    cStringArg = CommandLineArguments.Arguments["--connection-string"],
+                    fileNameArg = CommandLineArguments.GetArgument("-s", "--source");
 
-            MySqlCodeDoc codeDoc = new MySqlCodeDoc(fileName);
-            Console.WriteLine(
-                "\nKód:\n\n{0}",
-                codeDoc.Process()
-                );
 
-            return true;
+                string pattern = fileNameArg.IsDefined ? fileNameArg.Value : null;
+
+                foreach (string fileName in Directory.GetFiles(Path.GetDirectoryName(pattern), Path.GetFileName(pattern)))
+                {
+                    Console.Write("Pushing {0} ...   ", fileName);
+
+                    MySqlCodeDoc codeDoc = new MySqlCodeDoc(fileName);
+                    string code = codeDoc.Process();
+
+                    // Pushing code:
+                    connection = new MySqlConnection(cStringArg.Value);
+                    connection.Open();
+                    MySqlCommand command = new MySqlCommand(code, connection);
+                    command.ExecuteNonQuery();
+
+                    Console.WriteLine("ok.");
+
+                }
+
+                return true;
+            }
+            catch
+            {
+                Console.WriteLine("failed.");
+                throw;
+            }
+            finally
+            {
+                if (connection != null
+                    && (connection.State == global::System.Data.ConnectionState.Closed
+                        || connection.State == global::System.Data.ConnectionState.Broken
+                    )
+                    )
+                    connection.Close();
+
+            }
         }
 
         protected override void Release()

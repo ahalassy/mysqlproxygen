@@ -64,17 +64,15 @@ namespace MySqlDevTools.Documents
 
         public string FileName { get; private set; }
 
+        public RoutineType RoutineType { get; private set; }
+
         public MySqlMacroModel MacroModel { get { return _macroModel; } }
 
         public ProcessStackFrame TopFrame { get { return _stack[_stack.Count - 1]; } }
 
         public MySqlCodeDoc ParentDoc { get; private set; }
 
-        //public string RoutineName 
-        //{
-        //    get { return ParentDoc != null ? ParentDoc.RoutineName : _routineName; }
-        //    private set { _routineName = value; }
-        //}
+        public string RoutineName { get { return _routineName; } }
 
         internal int CurrentLine { get { return _currentLine; } }
 
@@ -94,6 +92,9 @@ namespace MySqlDevTools.Documents
 
         private bool IsDefined(string macroName)
         {
+            if (ParentDoc != null)
+                return ParentDoc.IsDefined(macroName);
+
             foreach (MySqlMacro macro in _macros)
                 if (macro.Name.Equals(macroName))
                     return true;
@@ -143,11 +144,14 @@ namespace MySqlDevTools.Documents
 
         private string ApplyMacros(string ln)
         {
+            if (ParentDoc != null)
+                return ParentDoc.ApplyMacros(ln);
+
             foreach (MySqlMacro macro in _macros)
                 if (!String.IsNullOrEmpty(macro.Content))
                     ln = ln.Replace(macro.Name, macro.Content);
 
-            return ln;
+            return ln.Contains("--") ? ln.Substring(0, ln.IndexOf("--")) : ln;
         }
 
         private void InternalProcessCode()
@@ -159,10 +163,14 @@ namespace MySqlDevTools.Documents
                 string ln = null;
                 while ((ln = CurrentReader.ReadLine()) != null)
                 {
-                    if (IsPreprocessorDirective(ln))
-                        MacroModel.Process(ln);
+                    if (IsPreprocessorDirective(ln.TrimStart()))
+                        MacroModel.Process(ln.TrimStart());
                     else if (!TopFrame.Ignore)
-                        CodeWriter.WriteLine(ApplyMacros(ln));
+                    {
+                        ln = ApplyMacros(ln);
+                        if (!String.IsNullOrEmpty(ln))
+                            CodeWriter.WriteLine(ln);
+                    }
 
                     _currentLine++;
                 }
@@ -182,7 +190,7 @@ namespace MySqlDevTools.Documents
             if (ParentDoc != null)
                 return;
 
-            bool isProc = false;
+            RoutineType = RoutineType.Unknown;
 
             string
                 procNameChars = "_abcdefghijklmnopqrstxyvwz0123456789",
@@ -196,13 +204,14 @@ namespace MySqlDevTools.Documents
 
             int routinePos = code.ToUpper().IndexOf("FUNCTION", defPos);
             if (routinePos < 0)
-            {
-                isProc = true;
                 routinePos = code.ToUpper().IndexOf("PROCEDURE", defPos);
-            }
+            else
+                RoutineType = RoutineType.Function;
 
             if (routinePos < 0)
                 throw new Exception("Source must contain \"CREATE PROCEDURE <proc_name>\" or \"CREATE FUNCTION <func_name>\" phrase!");
+            else if (RoutineType == RoutineType.Unknown)
+                RoutineType = RoutineType.Procedure;
 
             int pos;
             for (pos = defPos + "CREATE".Length; pos < routinePos; pos++)
@@ -210,7 +219,7 @@ namespace MySqlDevTools.Documents
                     throw new Exception("Source must contain \"CREATE PROCEDURE <proc_name>\" or \"CREATE FUNCTION <func_name>\" phrase!");
 
             _routineName = "";
-            pos += isProc ? "PROCEDURE".Length : "FUNCTION".Length;
+            pos += RoutineType == RoutineType.Procedure ? "PROCEDURE".Length : "FUNCTION".Length;
             while (code.Length > pos && whiteSpaces.Contains(code[pos])) pos++;
 
             while (code.Length > pos && (procNameChars.Contains(code[pos]) || procNameChars.ToUpper().Contains(code[pos])))
@@ -222,8 +231,8 @@ namespace MySqlDevTools.Documents
             if (_routineName.ToUpper() != Path.GetFileNameWithoutExtension(FileName).ToUpper())
                 throw new Exception(
                     String.Format(
-                        "Stored routine name \"{0}\" does not match file name {1}!", 
-                        _routineName, 
+                        "Stored routine name \"{0}\" does not match file name {1}!",
+                        _routineName,
                         Path.GetFileNameWithoutExtension(FileName)
                         )
                     );
@@ -241,6 +250,7 @@ namespace MySqlDevTools.Documents
                 CodeWriter = new StringWriter();
 
                 InternalProcessCode();
+
             }
             catch (CodeProcessException)
             {
@@ -256,7 +266,16 @@ namespace MySqlDevTools.Documents
             }
 
             ValidateCode();
-            return CodeWriter.ToString();
+
+            if (ParentDoc == null)
+                return String.Format(
+                    RoutineType == RoutineType.Function ?
+                        "DROP FUNCTION IF EXISTS {0};\n\n{1}" : "DROP PROCEDURE IF EXISTS {0};\n\n{1}",
+                    RoutineName,
+                    CodeWriter.ToString()
+                    );
+            else
+                return CodeWriter.ToString();
         }
 
         public MySqlCodeDoc(string fileName)
@@ -275,6 +294,8 @@ namespace MySqlDevTools.Documents
 
         private void ehProcessMessage(object sender, EventArgs args)
         {
+
+
             if (TopFrame.Ignore) return;
 
             MessageDirective directive = sender as MessageDirective;
@@ -283,10 +304,12 @@ namespace MySqlDevTools.Documents
 
             if (directive is WarningDirective)
             {
+                if (Console.CursorLeft > 0) Console.WriteLine();
                 Console.WriteLine("## Warning: \"{0}\"", directive.Arguments);
                 return;
             }
 
+            if (Console.CursorLeft > 0) Console.WriteLine();
             Console.WriteLine("## Message: \"{0}\"", directive.Arguments);
 
 

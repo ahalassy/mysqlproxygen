@@ -1,0 +1,17 @@
+﻿#include type_extensions.sqli
+
+CREATE FUNCTION SampleProc() returns string
+BEGIN
+
+	--Variables stored in this include:
+	#include SampleInclude.sqli
+
+	set
+		rsval = "This is a result"
+		;
+		
+	return rsval;
+	
+END;
+
+-- eof

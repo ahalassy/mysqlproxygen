@@ -39,6 +39,11 @@ namespace MySqlDevTools.Config
             get { return CommandLineArguments.GetArgument("-v", "--verbose").IsDefined; }
         }
 
+        public static string ConnectionString
+        {
+            get { return CommandLineArguments.Arguments["--connection-string"].Value; }
+        }
+
         public static ToolCommand Command
         {
             get

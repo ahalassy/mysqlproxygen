@@ -5,13 +5,13 @@ using System.Text;
 
 namespace MySqlDevTools.Documents
 {
-    //public enum RoutineType
-    //{
-    //    Unknown,
+    public enum RoutineType
+    {
+        Unknown,
 
-    //    Procedure,
+        Procedure,
 
-    //    Function
+        Function
 
-    //}
+    }
 }

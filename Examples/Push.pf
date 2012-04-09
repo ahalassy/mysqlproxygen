@@ -1,0 +1,7 @@
+# This is a sample parameter file
+
+# Parameter:			Value:	
+--source 				..\..\..\..\Examples\*.sqlp
+--connection-string 	Server=192.168.56.254;Uid=proxygen;Pwd=proxygen;Database=sakila;
+
+#eof

@@ -1,0 +1,47 @@
+-------------------------------------------------------------------------------
+
+MyProxyGen.exe
+	by Adam Halassy,
+	Licensed by the terms of GPLv3
+	
+Use with care! Absolutely no warranty!
+	
+-------------------------------------------------------------------------------
+	1. General information
+	
+MyProxyGen is a command line tool to bouild a MySQL stored procedure code from
+	separated files. This just preprocessing: handles only the "#" leaded
+	words. 
+
+MyProxyGen is a also a tool to push up to the database (Replacing existing
+	routines) and test theese with custom parameters. The third big function
+	is that MyProxyGen generates a .NET Proxy assembly to help write 
+	applications.
+	
+-------------------------------------------------------------------------------
+	2. Writing MyProxyGen compatible sources
+	
+	See the "Preprocessor Reference" attachment!
+
+-------------------------------------------------------------------------------
+	3. Pushing up to a database
+
+-------------------------------------------------------------------------------
+	4. Testing with the tool
+	
+-------------------------------------------------------------------------------
+	5. Proxy generation
+	
+-------------------------------------------------------------------------------
+	6. Command line arguments
+	
+	GENERAL ARGUMENTS: (Can use always)
+	--source {value}: Main source file (Except PROXYGEN!)
+	--verbose: More details displayed
+	
+	PUSH:
+	
+	DEBUG:
+	
+	PROXYGEN:
+	

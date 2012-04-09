@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\ParameterFile.cs" />
     <Compile Include="Documents\Directives\ConditionalDirectives.cs" />
     <Compile Include="Documents\Directives\MessageDirective.cs" />
     <Compile Include="Documents\Enumerations.cs" />

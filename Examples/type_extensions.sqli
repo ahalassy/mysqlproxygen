@@ -1,0 +1,8 @@
+#ifndef __type_extensions
+#define __type_extensions
+
+-- This include defines some of the most common types as a macro
+
+#define string VARCHAR(256)
+
+#endif

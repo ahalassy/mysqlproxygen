@@ -35,6 +35,10 @@ namespace MySqlDevTools
             CommandClass.Verbose =
                 PreprocessorDirective.Verbose = RuntimeConfig.IsVerbose;
 
+            CommandLineArg pfArg = CommandLineArguments.GetArgument("-p", "--pf");
+            if (pfArg.IsDefined)
+                ParameterFile.ApplyParameters(pfArg.Value);
+
         }
 
         static void Main(string[] args)

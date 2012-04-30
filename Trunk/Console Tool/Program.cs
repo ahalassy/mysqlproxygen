@@ -77,9 +77,6 @@ namespace MySqlDevTools
                     ex.StackTrace
                     );
             }
-
-            Console.Write("Press ENTER to finish ...");
-            Console.ReadLine();
         }
     }
 }

@@ -23,6 +23,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Reflection;
 
 namespace Halassy.Data
 {
@@ -127,26 +128,28 @@ namespace Halassy.Data
             InternalExecuteSqlCommand(sql, CommandExecution.Command);
         }
 
-        public DataTable RunProcedure(string name, DbStoredRoutineParms parms)
+        public DataTable RunProcedure(string name, DbStoredRoutineParmCollection parms)
         {
             DbCommand command = MgmtObjectFactory.CreateCommand(
                 name,
                 CurrentConnection
                 );
 
+            command.CommandType = CommandType.StoredProcedure;
             parms.FillParameters(command);
             DbDataReader reader = InternalExecuteCommand(command, CommandExecution.Query) as DbDataReader;
-            parms.FetchParameters(command);
             DataTable result = new DataTable();
             if (reader != null)
             {
                 result.Load(reader);
                 reader.Close();
             }
+            parms.FetchParameters(command);
+
             return result;
         }
 
-        public void CallFunction(string name, DbStoredRoutineParms parms)
+        public void CallFunction(string name, DbStoredRoutineParmCollection parms)
         {
             DbCommand command = MgmtObjectFactory.CreateCommand(
                 name,
@@ -185,10 +188,22 @@ namespace Halassy.Data
             }
         }
 
-        public DbProxyClass(string connectionString, DbManagementObjectFactoryClass mgmtObjFactory)
+        public DbProxyClass(string connectionString, Type mgmtObjFactoryType)
         {
-            this.MgmtObjectFactory = mgmtObjFactory;
+            if (!typeof(DbManagementObjectFactoryClass).IsAssignableFrom(mgmtObjFactoryType))
+                throw new InvalidCastException(
+                    String.Format(
+                        "The shipped factory class type must be inherited from {0}!",
+                        typeof(DbManagementObjectFactoryClass).FullName
+                        )
+                    );
+
             this.ConnectionString = connectionString;
+
+            ConstructorInfo constructor = mgmtObjFactoryType.GetConstructor(
+                new Type[] { typeof(DbProxyClass) }
+                );
+            this.MgmtObjectFactory = constructor.Invoke(new object[] { this }) as DbManagementObjectFactoryClass;
         }
 
         ~DbProxyClass()

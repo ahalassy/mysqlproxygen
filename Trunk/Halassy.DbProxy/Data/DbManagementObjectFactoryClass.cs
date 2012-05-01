@@ -55,7 +55,8 @@ namespace Halassy.Data
             DbConnection connection
             );
 
-        public abstract DbParameter CreateParameter(
+        public abstract void AddParameter(
+            DbCommand command,
             string name,
             Type type,
             ParameterDirection direction,

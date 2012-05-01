@@ -1,0 +1,39 @@
+#include type_extensions.sqli
+
+CREATE PROCEDURE CreateAcMstr(
+	IN domain VARCHAR(16),
+	IN code VARCHAR(16),
+	IN dsc VARCHAR(128)
+	)
+	LANGUAGE SQL
+	NOT DETERMINISTIC
+	READS SQL DATA
+	SQL SECURITY DEFINER
+	COMMENT ''
+
+BEGIN
+
+	if not exists(select * from ac_mstr where ac_account = code) then
+		insert into ac_mstr (
+				ac_domain,
+				ac_account,
+				ac_desc
+			) values (
+				domain,
+				code,
+				dsc
+			);
+	
+	else
+		update ac_mstr 
+			set
+				ac_desc = dsc
+			where ac_domain = domain
+				and ac_account = code
+			limit 1;
+	
+	end if;
+	
+END
+
+-- eof

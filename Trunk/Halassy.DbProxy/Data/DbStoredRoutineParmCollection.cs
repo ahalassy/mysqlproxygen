@@ -26,40 +26,8 @@ using System.Data;
 
 namespace Halassy.Data
 {
-    public class DbStoredRoutineParms : IEnumerable
+    public class DbStoredRoutineParmCollection
     {
-        #region private class DbStoredRoutineEnumerator : IEnumerator
-        private class DbStoredRoutineEnumerator : IEnumerator
-        {
-            private DbStoredRoutineParms _parms;
-
-            #region IEnumerator Members
-
-            public object Current
-            {
-                get { throw new NotImplementedException(); }
-            }
-
-            public bool MoveNext()
-            {
-                throw new NotImplementedException();
-            }
-
-            public void Reset()
-            {
-                throw new NotImplementedException();
-            }
-
-            #endregion
-
-            public DbStoredRoutineEnumerator(DbStoredRoutineParms parms)
-            {
-                _parms = parms;
-            }
-        }
-
-        #endregion
-
         private DbProxyClass _proxy = null;
 
         private List<DbStoredRoutineParm> _parms = new List<DbStoredRoutineParm>();
@@ -87,6 +55,21 @@ namespace Halassy.Data
 
         public DataTable Result { get; internal set; }
 
+        public void Add(ParameterDirection direction, string name, Type valueType)
+        {
+            _parms.Add(new DbStoredRoutineParm(direction, name, valueType));
+        }
+
+        public void Add(ParameterDirection direction, string name, object initVal)
+        {
+            _parms.Add(new DbStoredRoutineParm(direction, name, initVal));
+        }
+
+        public void Add(ParameterDirection direction, string name, object initVal, Type valueType)
+        {
+            _parms.Add(new DbStoredRoutineParm(direction, name, initVal, valueType));
+        }
+
         /// <summary>
         /// Fills the selected command with the stored parameters
         /// </summary>
@@ -94,9 +77,11 @@ namespace Halassy.Data
         public void FillParameters(DbCommand command)
         {
             command.Parameters.Clear();
-            foreach (DbStoredRoutineParm parm in this)
+            foreach (DbStoredRoutineParm parm in _parms)
             {
-                Proxy.MgmtObjectFactory.CreateParameter(
+
+                Proxy.MgmtObjectFactory.AddParameter(
+                    command,
                     parm.SqlName,
                     parm.ValueType,
                     parm.Direction,
@@ -111,26 +96,18 @@ namespace Halassy.Data
         /// <param name="command">Command</param>
         public void FetchParameters(DbCommand command)
         {
-            foreach (DbStoredRoutineParm parm in this)
+            foreach (DbStoredRoutineParm parm in _parms)
             {
                 if (!parm.IsOutput) continue;
 
-                parm.Value = command.Parameters[parm.Name].Value;
+                parm.Value = command.Parameters[parm.SqlName].Value;
             }
         }
 
-        public DbStoredRoutineParms(DbProxyClass proxy)
+        public DbStoredRoutineParmCollection(DbProxyClass proxy)
         {
             _proxy = proxy;
         }
 
-        #region IEnumerable Members
-
-        public IEnumerator GetEnumerator()
-        {
-            return new DbStoredRoutineEnumerator(this);
-        }
-
-        #endregion
     }
 }

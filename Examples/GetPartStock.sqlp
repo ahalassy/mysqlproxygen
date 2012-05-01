@@ -1,0 +1,22 @@
+#include type_extensions.sqli
+#include CursorHandle.sqli
+
+CREATE PROCEDURE GetPartStock(
+	IN domain key_string,
+	IN part key_string,
+	OUT qty_stock decimal
+	) PROCEDURE_DEFAULTS
+	
+BEGIN
+	SELECT sum(tr_amt)
+		INTO qty_stock
+		FROM tr_hist
+		WHERE tr_domain = domain
+			AND tr_part = part;
+			
+	IF qty_stock IS NULL THEN
+		SET qty_stock = 0;
+	
+	END IF;
+
+END;

@@ -1,0 +1,30 @@
+#include type_extensions.sqli
+#include CursorHandle.sqli
+
+CREATE PROCEDURE GetAcMstr(
+	IN domain key_string,
+	IN code key_string,
+	OUT dsc string
+	) -- PROCEDURE_DEFAULTS
+
+BEGIN
+	DECLARE_FETCH_SUCCESS;
+
+	DECLARE cAcMstr cursor for 
+		select ac_desc 
+		from ac_mstr 
+		where ac_domain = domain
+			and ac_account = code
+		limit 1;
+	DECLARE_CURSOR_HANDLER;
+
+	open cAcMstr;
+	fetch cAcMstr into dsc;
+	close cAcMstr;
+	if not fetch_success then
+		set dsc = "";
+	end if;
+	
+END
+
+-- eof

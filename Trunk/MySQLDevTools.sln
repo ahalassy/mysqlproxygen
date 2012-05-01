@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Halassy.DbProxy", "Halassy.DbProxy\Halassy.DbProxy.csproj", "{4AF12C56-B9B0-4EC5-A5E6-8AE87807412D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sandbox", "Sandbox", "{A51F5F4E-286C-4440-B34E-7D32E8C9743D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoredProcedureExample", "Sandbox\StoredProcedureExample\StoredProcedureExample.csproj", "{13747D41-4761-4C47-BC7D-52F04CA77808}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoredProcedureSandbox", "Sandbox\StoredProcedureSandbox\StoredProcedureSandbox.csproj", "{F43B711A-8A1C-40B9-A69C-399115A51034}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,8 +31,20 @@ Global
 		{4AF12C56-B9B0-4EC5-A5E6-8AE87807412D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AF12C56-B9B0-4EC5-A5E6-8AE87807412D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AF12C56-B9B0-4EC5-A5E6-8AE87807412D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13747D41-4761-4C47-BC7D-52F04CA77808}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13747D41-4761-4C47-BC7D-52F04CA77808}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13747D41-4761-4C47-BC7D-52F04CA77808}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13747D41-4761-4C47-BC7D-52F04CA77808}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F43B711A-8A1C-40B9-A69C-399115A51034}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F43B711A-8A1C-40B9-A69C-399115A51034}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F43B711A-8A1C-40B9-A69C-399115A51034}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F43B711A-8A1C-40B9-A69C-399115A51034}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{13747D41-4761-4C47-BC7D-52F04CA77808} = {A51F5F4E-286C-4440-B34E-7D32E8C9743D}
+		{F43B711A-8A1C-40B9-A69C-399115A51034} = {A51F5F4E-286C-4440-B34E-7D32E8C9743D}
 	EndGlobalSection
 EndGlobal

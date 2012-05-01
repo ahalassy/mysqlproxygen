@@ -1,0 +1,10 @@
+-- Cursor error handling code snippet:
+#ifndef __CURSOR_ERROR_HANDLING__
+#define __CURSOR_ERROR_HANDLING__
+
+#define DECLARE_FETCH_SUCCESS	declare fetch_success int default true
+#define DECLARE_CURSOR_HANDLER 	declare continue handler for not found set fetch_success = false
+
+#endif
+
+-- EOF

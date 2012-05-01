@@ -56,6 +56,7 @@ namespace Halassy.Data
             this.Direction = direction;
             this.Name = name;
             this.Value = initVal;
+            this.ValueType = valueType;
         }
 
         public DbStoredRoutineParm(ParameterDirection direction, string name, Type valueType)

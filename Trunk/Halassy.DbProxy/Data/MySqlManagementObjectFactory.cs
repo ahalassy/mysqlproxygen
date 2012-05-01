@@ -29,10 +29,12 @@ namespace Halassy.Data
 {
     public class MySqlManagementObjectFactory : DbManagementObjectFactoryClass
     {
+        private const MySqlDbType SQLTYPE_STRING = MySqlDbType.VarChar;
+
         protected override DbTypeMapping[] CreateMapping()
         {
             return new DbTypeMapping[] {
-                new DbTypeMapping(typeof(DateTime), MySqlDbType.Datetime),
+                new DbTypeMapping(typeof(DateTime), MySqlDbType.DateTime),
                 new DbTypeMapping(typeof(byte[]), MySqlDbType.Blob),
                 new DbTypeMapping(typeof(System.Int16), MySqlDbType.Int16),
                 new DbTypeMapping(typeof(System.Int32), MySqlDbType.Int32),
@@ -44,7 +46,7 @@ namespace Halassy.Data
                 new DbTypeMapping(typeof(System.UInt32), MySqlDbType.UInt32),
                 new DbTypeMapping(typeof(System.UInt64), MySqlDbType.UInt64),
                 new DbTypeMapping(typeof(decimal), MySqlDbType.Decimal),
-                new DbTypeMapping(typeof(string), MySqlDbType.VarChar)
+                new DbTypeMapping(typeof(string), SQLTYPE_STRING)
                 };
         }
 
@@ -64,22 +66,35 @@ namespace Halassy.Data
                  );
         }
 
-        public override DbParameter CreateParameter(
+        public override void AddParameter(
+            DbCommand command,
             string name,
             Type type,
             ParameterDirection direction,
             object value
             )
         {
-            MySqlParameter parm = new MySqlParameter(
-                name,
-                GetDbTypeOf(type)
-                );
+            MySqlCommand cmd = command as MySqlCommand;
 
-            parm.Value = value;
-            parm.Direction = direction;
+            switch (direction)
+            {
+                case ParameterDirection.Input:
+                case ParameterDirection.InputOutput:
+                    cmd.Parameters.AddWithValue(name, value);
+                    break;
 
-            return parm;
+
+                case ParameterDirection.Output:
+                    MySqlDbType dbType = (MySqlDbType)GetDbTypeOf(type);
+                    cmd.Parameters.Add(name, dbType);
+                    break;
+
+                default:
+                    throw new InvalidCastException(String.Format("Stored procedure parameter cannot be {0}!", direction));
+
+            }
+
+            cmd.Parameters[name].Direction = direction;
         }
 
         public MySqlManagementObjectFactory(DbProxyClass proxy)

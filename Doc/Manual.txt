@@ -36,10 +36,11 @@ MyProxyGen is a also a tool to push up to the database (Replacing existing
 	6. Command line arguments
 	
 	GENERAL ARGUMENTS: (Can use always)
-	--source {value}: Main source file (Except PROXYGEN!)
-	--verbose: More details displayed
+		--source {value}: Main source file (Except PROXYGEN!)
+		--verbose: More details displayed
 	
 	PUSH:
+		-c, --connection-string: Connection string to connect to a database
 	
 	DEBUG:
 	

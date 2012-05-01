@@ -1,0 +1,52 @@
+#schema
+
+#include type_extensions.sqli
+
+DROP TABLE IF EXISTS tr_hist;
+CREATE TABLE tr_hist (
+	tr_hist_recid	recid_fld,
+	tr_domain 		key_string_fld,
+	tr_trnbr		int NOT NULL,
+	tr_account 		key_string_fld,
+	tr_datetime		datetime,
+	tr_type			key_string_fld,
+	tr_amt			decimal,
+	tr_part			key_string_fld,
+	PRIMARY KEY tr_trnbr (tr_trnbr, tr_domain),
+	UNIQUE KEY tr_hist_recid (tr_hist_recid)
+	) TABLE_DEFAULTS;
+	
+CREATE TRIGGER tr_hist_create BEFORE INSERT
+	ON tr_hist FOR EACH ROW
+BEGIN
+	DECLARE max_trnbr INT DEFAULT 0;
+
+	SELECT max(tr_trnbr) 
+		INTO max_trnbr
+		FROM tr_hist
+		WHERE tr_domain = NEW.tr_domain;
+		
+	IF max_trnbr IS NULL THEN
+		SET max_trnbr = 0;
+	
+	END IF;
+
+	SET
+		NEW.tr_datetime = now(),
+		NEW.tr_trnbr = max_trnbr + 1;
+
+END;
+
+INSERT INTO tr_hist
+	(tr_domain,	tr_account,	tr_type, 	tr_amt, tr_part) VALUES
+	("dom", 	"10",		"CR-STOCK",	10.123, "100001"),
+	("dom",		"10", 		"CR-STOCK", 10.123, "100002"),
+	("dom",		"10",		"CR-STOCK", 10.123, "100002"),
+	("dom",		"10",		"CR-STOCK", 10.123, "100002"),
+	("dom",		"10",		"CR-STOCK", 10, 	"100005"),
+	("dom",		"10",		"ISSUE", 	-2, 	"100005"),
+	("dom",		"10",		"ISSUE", 	-2, 	"100005"),
+	("dom",		"10",		"INCOME", 	 3,		"100005"),
+	("dom",		"10",		"CR-STOCK", 10.123, "100005");
+
+-- EOF	

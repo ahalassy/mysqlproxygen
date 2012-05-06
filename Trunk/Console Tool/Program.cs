@@ -77,6 +77,9 @@ namespace MySqlDevTools
                     ex.StackTrace
                     );
             }
+
+            if (CommandLineArguments.Arguments["--debug"].IsDefined)
+                Console.ReadLine();
         }
     }
 }

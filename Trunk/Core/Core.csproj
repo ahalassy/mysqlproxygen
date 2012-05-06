@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MySqlDevTools</RootNamespace>
-    <AssemblyName>Core</AssemblyName>
+    <AssemblyName>MySqlDevTools.Core</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyCompilerException.cs" />
     <Compile Include="Config\ParameterFile.cs" />
     <Compile Include="Documents\Directives\ConditionalDirectives.cs" />
     <Compile Include="Documents\Directives\MessageDirective.cs" />
@@ -75,8 +76,13 @@
     <Compile Include="Documents\MySqlCodeDoc.cs" />
     <Compile Include="Documents\MySqlMacroModel.cs" />
     <Compile Include="Documents\Directives\PreprocessorDirective.cs" />
+    <Compile Include="Documents\SqlRoutineSyntaxException.cs" />
+    <Compile Include="Documents\StoredRoutineParser.cs" />
     <Compile Include="Documents\Structs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflection\ProxyAssemblyBuilder.cs" />
+    <Compile Include="Reflection\ProxyCodeBuilder.cs" />
+    <Compile Include="Reflection\StoredRoutineInfo.cs" />
     <Compile Include="Services\CodeProcessException.cs" />
     <Compile Include="System\OutputWriter.cs" />
     <Compile Include="System\Reflection\TypeExtensions.cs" />
@@ -92,6 +98,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Halassy.DbProxy\Halassy.DbProxy.csproj">
+      <Project>{4AF12C56-B9B0-4EC5-A5E6-8AE87807412D}</Project>
+      <Name>Halassy.DbProxy</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

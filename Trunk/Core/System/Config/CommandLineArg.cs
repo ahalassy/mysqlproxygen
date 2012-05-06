@@ -124,6 +124,12 @@ namespace System.Config
             return base.GetHashCode();
         }
 
+        public override string ToString()
+        {
+            return IsSwitch || IsCommand ?
+                Name : String.Format("{0}=\"{1}\"", Name, Value);
+        }
+
         public bool Equals(string argName)
         {
             if (!IsDefined || String.IsNullOrEmpty(argName)) return false;

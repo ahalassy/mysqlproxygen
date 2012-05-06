@@ -15,7 +15,9 @@ namespace MySqlDevTools.Config
             string line;
             while ((line = reader.ReadLine()) != null)
             {
+                line = line.Replace("\t", " ");
                 line = line.TrimStart();
+
                 if (String.IsNullOrEmpty(line))
                     continue;
 

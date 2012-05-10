@@ -12,10 +12,4 @@
 #define recid_fld			INT NOT NULL AUTO_INCREMENT
 #define recid				INT
 
--- Help table definitions:
-#define TABLE_DEFAULTS 		ENGINE=InnoDB DEFAULT CHARSET=utf8
-
--- Help prcodeure definitions:
-#define PROCEDURE_DEFAULTS 	LANGUAGE SQL NOT DETERMINISTIC READS SQL DATA SQL SECURITY DEFINER COMMENT ''
-
 #endif

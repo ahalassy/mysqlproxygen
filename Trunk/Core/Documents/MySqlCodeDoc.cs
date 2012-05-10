@@ -132,9 +132,6 @@ namespace MySqlDevTools.Documents
 
             _macroModel.RegisterDirective("schema", typeof(PreprocessorDirective), new EventHandler(ehSchemaMarker));
 
-            // TODO: #include
-            // TODO: #function 
-            // TODO: #procedure
         }
 
         private void DefineMacro(string name, string content)
@@ -292,7 +289,7 @@ namespace MySqlDevTools.Documents
 
         public MySqlCodeDoc(string fileName)
         {
-            this.FileName = fileName;
+            this.FileName = PathExtensions.NormalizePath(fileName);
 
             InitializeDom();
         }
@@ -357,14 +354,14 @@ namespace MySqlDevTools.Documents
 
         private void ehProcessEndIfDefined(object sender, EventArgs args)
         {
-            ConditionalDirective directive = sender as ConditionalDirective;
+            // ConditionalDirective directive = sender as ConditionalDirective;
 
             CloseStackFrame();
         }
 
         private void ehProcessElseDefined(object sender, EventArgs args)
         {
-            ConditionalDirective directive = sender as ConditionalDirective;
+            // ConditionalDirective directive = sender as ConditionalDirective;
 
             TopFrame.Ignore = TopFrame.WasFullfilledBranch;
         }
@@ -411,8 +408,10 @@ namespace MySqlDevTools.Documents
 
             PreprocessorDirective directive = sender as PreprocessorDirective;
             if (directive == null) return;
-
-            MySqlCodeDoc codeDoc = new MySqlCodeDoc(Path.Combine(WorkingDir, directive.Arguments));
+			
+			string targetPath = PathExtensions.NormalizePath(directive.Arguments);
+			
+            MySqlCodeDoc codeDoc = new MySqlCodeDoc(Path.Combine(WorkingDir, targetPath));
             codeDoc.ParentDoc = this;
             CodeWriter.WriteLine(codeDoc.Process());
         }

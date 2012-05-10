@@ -11,6 +11,8 @@ namespace MySqlDevTools.Config
     {
         public static void ApplyParameters(string fileName)
         {
+			fileName = PathExtensions.NormalizePath(fileName);
+			
             StreamReader reader = new StreamReader(fileName);
             string line;
             while ((line = reader.ReadLine()) != null)

@@ -40,7 +40,7 @@ namespace MySqlDevTools.Services
         {
             CommandClass.ExecuteCommand(typeof(MySqlPushCommand));
 
-            CommandLineArg parmArgs = CommandLineArguments.Arguments["--debug-parms"];
+            // CommandLineArg parmArgs = CommandLineArguments.Arguments["--debug-parms"];
 
 
 

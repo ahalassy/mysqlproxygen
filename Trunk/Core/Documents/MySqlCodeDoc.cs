@@ -27,14 +27,7 @@ namespace MySqlDevTools.Documents
 {
     public class MySqlCodeDoc
     {
-        public static bool IsPreprocessorDirective(string ln)
-        {
-            if (String.IsNullOrEmpty(ln) || String.IsNullOrEmpty(ln.TrimStart()))
-                return false;
-
-            return ln.TrimStart()[0] == '#';
-        }
-
+        #region public class ProcessStackFrame		
         public class ProcessStackFrame
         {
             public bool WasFullfilledBranch { get; set; }
@@ -48,7 +41,17 @@ namespace MySqlDevTools.Documents
             }
 
         }
+		
+		#endregion
 
+		public static bool IsPreprocessorDirective(string ln)
+        {
+            if (String.IsNullOrEmpty(ln) || String.IsNullOrEmpty(ln.TrimStart()))
+                return false;
+
+            return ln.TrimStart()[0] == '#';
+        }
+		
         private bool
             _wasDirective = false;
 
@@ -201,7 +204,7 @@ namespace MySqlDevTools.Documents
             RoutineType = RoutineType.Unknown;
 
             string
-                procNameChars = "_abcdefghijklmnopqrstxyvwz0123456789",
+                procNameChars = "_abcdefghijklmnopqrstuxyvwz0123456789",
                 whiteSpaces = " \t\n\r",
                 code = CodeWriter.ToString();
 
@@ -289,9 +292,8 @@ namespace MySqlDevTools.Documents
 
         public MySqlCodeDoc(string fileName)
         {
-            this.FileName = PathExtensions.NormalizePath(fileName);
-
             InitializeDom();
+			this.FileName = PathExtensions.NormalizePath(fileName);
         }
 
         private void ehProcessMacro(object sender, EventArgs args)

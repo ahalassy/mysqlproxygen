@@ -1,13 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Core/Config/ParameterFile.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Core/Documents/MySqlCodeDoc.cs">
     <Files>
-      <File FileName="Core/Documents/MySqlCodeDoc.cs" Line="293" Column="1" />
-      <File FileName="Core/Config/ParameterFile.cs" Line="14" Column="54" />
+      <File FileName="Core/Documents/MySqlCodeDoc.cs" Line="155" Column="23" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/mnt/media/Repo/MySqlProxyGen.Net/Trunk/Core/Documents/MySqlCodeDoc.cs" line="154" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

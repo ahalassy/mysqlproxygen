@@ -31,7 +31,8 @@ namespace MySqlDevTools.Reflection
         private string[] UsedNamespaces = new string[] {
             "System",
             "System.Data",
-            "Halassy.Data"
+            "Halassy.Data",
+			"MySql.Data.MySqlClient"
             };
 
         private string HeaderText =
@@ -42,9 +43,14 @@ namespace MySqlDevTools.Reflection
             "//" + "\n" +
             "//*****************************************************************************\n";
 
-        private string ConstructorCode =
+        private string ConstructorCodeA =
             "public {0}(string connectionString)" + "\n" +
             "   : base(connectionString, typeof(MySqlManagementObjectFactory))" + "\n" +
+            "{{ }}";
+		
+		private string ConstructorCodeB =
+            "public {0}(MySqlConnection connection)" + "\n" +
+            "   : base(connection, typeof(MySqlManagementObjectFactory))" + "\n" +
             "{{ }}";
 
         private string
@@ -105,9 +111,12 @@ namespace MySqlDevTools.Reflection
                 codeWriter.WriteLine();
             }
 
-            WriteCodeSnippet("\t\t", String.Format(ConstructorCode, ProxyName), codeWriter);
-
+            WriteCodeSnippet("\t\t", String.Format(ConstructorCodeA, ProxyName), codeWriter);
+			codeWriter.WriteLine ();
+			
+			WriteCodeSnippet("\t\t", String.Format(ConstructorCodeB, ProxyName), codeWriter);
             codeWriter.WriteLine();
+			
             codeWriter.WriteLine("\t}\n}");
             codeWriter.WriteLine();
             codeWriter.WriteLine("// EOF");

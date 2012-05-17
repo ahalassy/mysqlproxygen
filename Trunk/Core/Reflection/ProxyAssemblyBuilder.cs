@@ -68,7 +68,8 @@ namespace MySqlDevTools.Reflection
             };
 
         private string[] CustomReferences = new string[] {
-            "Halassy.DbProxy.dll"
+            "Halassy.DbProxy.dll",
+			"mysql.data.dll"
             };
 
         private string

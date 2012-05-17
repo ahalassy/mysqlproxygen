@@ -1,13 +1,17 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Core/Documents/MySqlCodeDoc.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Core/Documents/Structs.cs">
     <Files>
-      <File FileName="Core/Documents/MySqlCodeDoc.cs" Line="155" Column="23" />
+      <File FileName="Core/Services/MySqlProxyGenCommand.cs" Line="197" Column="37" />
+      <File FileName="Core/Documents/StoredRoutineParser.cs" Line="92" Column="72" />
+      <File FileName="Core/Documents/Structs.cs" Line="153" Column="30" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/mnt/media/Repo/MySqlProxyGen.Net/Trunk/Core/Documents/MySqlCodeDoc.cs" line="154" />
+      <Breakpoint file="/mnt/media/Repo/MySqlProxyGen.Net/Trunk/Core/Documents/Structs.cs" line="235" />
+      <Breakpoint file="/mnt/media/Repo/MySqlProxyGen.Net/Trunk/Core/Documents/StoredRoutineParser.cs" line="78" />
+      <Breakpoint file="/mnt/media/Repo/MySqlProxyGen.Net/Trunk/Core/Documents/Structs.cs" line="154" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

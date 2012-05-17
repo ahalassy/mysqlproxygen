@@ -40,8 +40,16 @@ namespace MySqlDevTools.Reflection
                 string asmPath = Path.GetDirectoryName(
                     Assembly.GetExecutingAssembly().GetName().CodeBase
                     );
-
-                return String.IsNullOrEmpty(asmPath) ? "" : asmPath.Replace("file:\\", "");
+				
+				switch (Environment.OSVersion.Platform) 
+				{
+					case PlatformID.MacOSX:
+					case PlatformID.Unix:
+						return String.IsNullOrEmpty(asmPath) ? "" : asmPath.Replace("file:", "");
+				
+					default:
+						return String.IsNullOrEmpty(asmPath) ? "" : asmPath.Replace("file:\\", "");
+				}
             }
         }
 

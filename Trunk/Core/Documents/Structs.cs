@@ -124,7 +124,13 @@ namespace MySqlDevTools.Documents
             new DefaultTypeValueHolder(typeof(decimal), "0"),
             new DefaultTypeValueHolder(typeof(DateTime), "DateTime.MinValue")
             };
-
+		
+		private static bool IsDirection(string tag)
+		{
+			tag = (tag ?? "").ToUpper();
+			return (tag == "IN" || tag == "OUT");
+		}
+		
         private static string CutTag(ref string text)
         {
             int pos = text.IndexOf(' ');
@@ -238,7 +244,15 @@ namespace MySqlDevTools.Documents
             _unsigned = sqlParmCode.ToUpper().Contains("UNSIGNED");
 
             _sqlDirection = CutTag(ref sqlParmCode);
-            _name = CutTag(ref sqlParmCode);
+            
+			if (IsDirection(_sqlDirection))
+				_name = CutTag(ref sqlParmCode);
+			else
+			{
+				_name = _sqlDirection;
+				_sqlDirection = "IN";
+			}
+			
             _sqlType = sqlParmCode.Trim().ToUpper().Replace("UNSIGNED", "");
 
             if (_sqlType.Contains('('))

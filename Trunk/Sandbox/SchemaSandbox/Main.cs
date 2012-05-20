@@ -99,22 +99,22 @@ namespace SchemaSandbox
 				if (!Directory.Exists("SchemaCode"))
 					Directory.CreateDirectory("SchemaCode");
 				
-				List<TableCodeBuilder> tableCodeBuilders = new List<TableCodeBuilder>();
+				List<TableCodeBuilder> tableCodeBuilders = new List<TableCodeBuilder> ();
 				foreach (DataRow tableRow in Tables.Rows)
 				{
 					string tableName = tableRow [0] as string;
 					if (String.IsNullOrWhiteSpace(tableName))
 						continue;
-					WriteStatus(String.Format( "Write code for table {0}", tableName));
+					WriteStatus(String.Format("Write code for table {0}", tableName));
 					QueryFieldInformation(tableName);
-					DataTableCodeDoc codeDoc = new DataTableCodeDoc(tableName, Fields);
-					TableCodeBuilder codeBuilder = new TableCodeBuilder("CloudStock.Data", codeDoc);
+					DataTableCodeDoc codeDoc = new DataTableCodeDoc (tableName, Fields);
+					TableCodeBuilder codeBuilder = new TableCodeBuilder ("CloudStock.Data", codeDoc);
 					tableCodeBuilders.Add(codeBuilder);
 					codeBuilder.SaveSource("SchemaCode" + Path.DirectorySeparatorChar.ToString() + codeBuilder.ClassName + ".cs");
 					WriteOk();
 				}
 				
-				DataBaseCodeBuilder dbCodeBuilder= new DataBaseCodeBuilder("CloudStock.Data", "cs_schema", tableCodeBuilders.ToArray() );
+				DataBaseCodeBuilder dbCodeBuilder = new DataBaseCodeBuilder ("CloudStock.Data", "cs_schema", "CloudStockSchemaProxy", tableCodeBuilders.ToArray());
 				dbCodeBuilder.SaveSource("SchemaCode" + Path.DirectorySeparatorChar.ToString() + dbCodeBuilder.ClassName + ".cs");
 				
 			}

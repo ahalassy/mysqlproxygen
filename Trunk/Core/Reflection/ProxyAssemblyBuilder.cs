@@ -64,22 +64,27 @@ namespace MySqlDevTools.Reflection
         private string[] SystemReferences = new string[] {
             "System.dll",
             "System.Data.dll",
+            "System.Data.Linq.dll",
             "System.Xml.dll"
             };
 
         private string[] CustomReferences = new string[] {
             "Halassy.DbProxy.dll",
-			"mysql.data.dll"
+			"Mysql.Data.dll",
+            "DbLinq.dll",
+            "DbLinq.MySql.dll"
             };
 
         private string
             _name,
-            _code,
             _path;
+		
+		private string[]
+			_codes;
 
         public string AssemblyName { get { return _name; } }
 
-        public string AssemblyCode { get { return _code; } }
+        public string[] AssemblyCode { get { return _codes; } }
 
         public string OutputPath { get { return _path; } }
 
@@ -144,7 +149,7 @@ namespace MySqlDevTools.Reflection
 
             foreach (string refasm in CustomReferences)
                 compilerParms.ReferencedAssemblies.Add(Path.Combine(CustomAssemblyPath, refasm));
-
+			
             CompilerResults result = codeProvider.CompileAssemblyFromSource(compilerParms, AssemblyCode);
             if (result.Errors.Count > 0)
                 throw CreateCompilerException(result);
@@ -152,11 +157,11 @@ namespace MySqlDevTools.Reflection
             CopyCustomAssemblies();
         }
 
-        public ProxyAssemblyBuilder(string path, string name, string code)
+        public ProxyAssemblyBuilder(string path, string name, string[] codes)
         {
             _path = path ?? "";
             _name = name;
-            _code = code;
+            _codes = codes;
         }
     }
 }

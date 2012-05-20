@@ -31,7 +31,7 @@ namespace DbLinqSandbox
 	[Database(Name = "cs_schema")]
 	public class CsSchemaDatabase: DataContext
 	{
-		public DbLinq.Data.Linq.Table<table_usr_mstr> usr_mstr		{ get { return base.GetTable<table_usr_mstr>(); } }
+		public DbLinq.Data.Linq.Table<table_usr_mstr> usr_mstr { get { return base.GetTable<table_usr_mstr>(); } }
 		
 		public CsSchemaDatabase (MySqlConnection connection):
 			base (connection)

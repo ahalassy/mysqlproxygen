@@ -46,23 +46,44 @@ namespace MySqlDevTools
 			"[Database(Name = \"{0}\")]" + "\n" +
 			"public class {1} : DataContext";
 		private readonly string ConstructorCode =
-            "public {0}(MySqlConnection connection)" + "\n" +
+            "private {0}(MySqlConnection connection)" + "\n" +
             "   : base(connection)" + "\n" +
-            "{{ }}";
+            "{{" + "\n" +
+			"\tthis.RoutineWrapper = new {1}(connection);" + "\n" +
+			"}}";
 		private readonly string DataTablePropertyCode = 
 			"public DbLinq.Data.Linq.Table<{0}> {1} {{ get {{ return base.GetTable<{0}>(); }} }}";
+		
+		private readonly string SingletonCode =
+			"#region Static members"+ "\n" +
+			"private static {0} _database = null;" + "\n" +
+			""+ "\n" +
+			"private MySqlConnection _connection = null;" + "\n" +
+			""+ "\n" +
+			"public static {0} Database {{ get {{ return _database; }} }}" + "\n" +
+			""+ "\n" +
+			"public static Open(MySqlConnection connection)" + "\n" +
+			"{{" + "\n" +
+			"\t_connection = connection;" + "\n" +
+			"\t_database = new {0}(connection);" + "\n" +
+			"}}" + "\n" +
+			"#endregion";
 		
 		#endregion
 		
 		private string
 			_dbName = null,
+			_proxyClassName = null,
 			_namespace = null;
+		
 		private TableCodeBuilder[]
 			_tableBuilders = null;
 		
 		public string DataBaseName { get { return _dbName; } }
 		
 		public string Namespace { get { return _namespace; } }
+		
+		public string ProxyClassName { get { return _proxyClassName; } }
 		
 		public string ClassName
 		{
@@ -102,7 +123,7 @@ namespace MySqlDevTools
 		{
 			StringReader reader = new StringReader (snippet);
 			string ln;
-			while (!String.IsNullOrEmpty( (ln = reader.ReadLine())))
+			while (( (ln = reader.ReadLine())) != null)
 				codeWriter.WriteLine(indent + ln);
 		}
 		
@@ -139,22 +160,36 @@ namespace MySqlDevTools
 				"\t",
 				String.Format(ClassHeader, DataBaseName, ClassName)
 				);
-			codeWriter.WriteLine("\t{\n");
+			codeWriter.WriteLine("\t{");
+			
+			// Singleton code:
+			WriteSnippet(
+				codeWriter,
+				"\t\t",
+				String.Format(SingletonCode, ClassName)
+				);
+			codeWriter.WriteLine();
+			
+			// ProxyClass:
+			codeWriter.WriteLine("\t\tpublic {0} RoutineWrapper {{ get; private set; }}\n", ProxyClassName);
 			
 			// Tables:
+			codeWriter.WriteLine("\t\t#region Data tables");
 			foreach (TableCodeBuilder tableCodeBuilder in TableCodeBuilders)
 				WriteSnippet(
 					codeWriter,
 					"\t\t",
 					String.Format(DataTablePropertyCode, tableCodeBuilder.ClassName, tableCodeBuilder.CodeDoc.TableName)
 					);
+			codeWriter.WriteLine("\t\t#endregion\n");
 			
 			// Constructor:
 			WriteSnippet(
 				codeWriter,
 				"\t\t",
-				String.Format(ConstructorCode, ClassName)
+				String.Format(ConstructorCode, ClassName, ProxyClassName)
 				);
+			codeWriter.WriteLine();
 			
 			// Finalize:
 			codeWriter.WriteLine("\t}\n}");
@@ -162,11 +197,17 @@ namespace MySqlDevTools
 			return codeWriter.ToString();
 		}
 		
-		public DataBaseCodeBuilder (string ns, string databaseName, TableCodeBuilder[] builders)
+		public DataBaseCodeBuilder (
+			string ns, 
+			string databaseName, 
+			string proxyClassName, 
+			TableCodeBuilder[] builders
+			)
 		{
 			_namespace = ns;
 			_dbName = databaseName;
 			_tableBuilders = builders;
+			_proxyClassName = proxyClassName;
 		}
 	}
 }

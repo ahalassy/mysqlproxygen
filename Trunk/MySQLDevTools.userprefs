@@ -1,34 +1,43 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Sandbox/DbLinqSandbox/Main.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Core/Services/MySqlProxyGenCommand.cs">
     <Files>
-      <File FileName="Sandbox/DbLinqSandbox/Data/table_usr_mstr.cs" Line="29" Column="54" />
-      <File FileName="Sandbox/DbLinqSandbox/Data/CsSchemaDatabase.cs" Line="20" Column="1" />
-      <File FileName="Sandbox/DbLinqSandbox/Main.cs" Line="58" Column="26" />
+      <File FileName="Core/Reflection/ProxyAssemblyBuilder.cs" Line="87" Column="24" />
+      <File FileName="Core/Services/MySqlProxyGenCommand.cs" Line="266" Column="6" />
+      <File FileName="Sandbox/SchemaSandbox/Main.cs" Line="85" Column="4" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Sandbox" expanded="True">
-            <Node name="DbLinqSandbox" expanded="True" selected="True">
+            <Node name="SchemaSandbox" expanded="True" />
+            <Node name="StoredProcedureSandbox" expanded="True">
               <Node name="References" expanded="True" />
-              <Node name="Data" expanded="True" />
             </Node>
           </Node>
+          <Node name="Console Tool" expanded="True" selected="True">
+            <Node name="References" expanded="True" />
+          </Node>
           <Node name="Core" expanded="True">
+            <Node name="References" expanded="True" />
+            <Node name="Documents" expanded="True" />
+            <Node name="Properties" expanded="True" />
             <Node name="Reflection" expanded="True" />
+            <Node name="Services" expanded="True" />
           </Node>
           <Node name="Halassy.DbProxy" expanded="True">
+            <Node name="References" expanded="True" />
             <Node name="Data" expanded="True" />
           </Node>
         </State>
       </Pad>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True" />
+      </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/mnt/media/Repo/MySqlProxyGen.Net/Trunk/Core/Documents/Structs.cs" line="235" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

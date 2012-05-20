@@ -66,7 +66,7 @@ Global
 		{4D4E6A79-022B-4A40-A931-14F9CFC2A33B} = {A51F5F4E-286C-4440-B34E-7D32E8C9743D}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Sandbox\SchemaSandbox\SchemaSandbox.csproj
+		StartupItem = Console Tool\Console Tool.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

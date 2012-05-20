@@ -28,7 +28,7 @@ using System.Reflection;
 namespace Halassy.Data
 {
     public class DbProxyClass : IDisposable
-    {
+    {		
         private bool
 			_externalConnection = false,
             _busy = false,

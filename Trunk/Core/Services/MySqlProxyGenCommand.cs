@@ -91,6 +91,29 @@ namespace MySqlDevTools.Services
 
             return result;
         }
+		
+		private DataTable QueryTables()
+		{
+			DataTable result = new DataTable();
+			MySqlCommand queryTables = new MySqlCommand("show tables;", Connection);
+			
+			ExecuteInto(result, queryTables);
+			
+			return result;
+		}
+		
+		private DataTable QueryFields(string tableName)
+		{
+			DataTable result = new DataTable();
+			MySqlCommand queryFields = new MySqlCommand(
+				String.Format("show fields from {0};", tableName),
+				Connection
+				);
+			
+			ExecuteInto(result, queryFields);
+			
+			return result;			
+		}
 
         private string GetDatabaseName()
         {
@@ -157,6 +180,40 @@ namespace MySqlDevTools.Services
                 Directory.CreateDirectory(path);
         }
 
+		private DataBaseCodeBuilder FetchSchemaCodes(CommandLineArg namespaceArg, CommandLineArg assemblyNameArg)
+		{
+			DataTable tables = QueryTables();
+        	List<TableCodeBuilder> tableCodeBuilders = new List<TableCodeBuilder>();
+        	foreach (DataRow row in tables.Rows)
+        	{
+        		string tableName = row[0] as string;
+        		DataTable fields = QueryFields(tableName);
+        		DataTableCodeDoc codeDoc = new DataTableCodeDoc(tableName, fields);
+        		tableCodeBuilders.Add(new TableCodeBuilder(namespaceArg.Value, codeDoc));
+        	}
+        	DataBaseCodeBuilder dbCodeBuilder = new DataBaseCodeBuilder(namespaceArg.Value, Database, assemblyNameArg.Value, tableCodeBuilders.ToArray());
+        	return dbCodeBuilder;
+		}
+
+		private List<StoredRoutineParser> FetchRoutineWrappers()
+		{
+			DataTable routines = QueryStoredRoutines();
+        	List<StoredRoutineParser> parsers = new List<StoredRoutineParser>();
+        	foreach (DataRow row in routines.Rows)
+        	    parsers.Add(QueryRoutineCode(row["Type"].ToString(), row["Name"].ToString()));
+        	return parsers;
+		}
+
+		private List<string> BuildSourceCode(DataBaseCodeBuilder dbCodeBuilder, ProxyCodeBuilder proxyCodeBuilder)
+		{
+			List<string> sourceCode = new List<string>();
+        	sourceCode.Add(proxyCodeBuilder.CreateCode());
+        	sourceCode.Add(dbCodeBuilder.CreateCode());
+        	foreach (TableCodeBuilder codeBuilder in dbCodeBuilder.TableCodeBuilders)
+        		sourceCode.Add(codeBuilder.CreateCode());
+        	return sourceCode;
+		}
+
         protected override bool CoreMethod()
         {
             StreamWriter buildLogWriter = null;
@@ -174,7 +231,9 @@ namespace MySqlDevTools.Services
                     pathArg = CommandLineArguments.Arguments["--output-path"];
 
                 string
-                    path = pathArg.IsDefined ? pathArg.Value : Directory.GetCurrentDirectory();
+                    path = Path.Combine(pathArg.IsDefined ? pathArg.Value : Directory.GetCurrentDirectory(), "source");
+				
+				
 
                 if (!assemblyNameArg.IsDefined) throw new Exception("You must specify assembly name!");
                 if (!cStringArg.IsDefined) throw new Exception("You must specify connection string!");
@@ -191,20 +250,32 @@ namespace MySqlDevTools.Services
                 WriteMsg("Database name");
                 _dbName = GetDatabaseName();
                 Console.WriteLine(Database);
+				
+				WriteMsg("Query database schema");
+				DataBaseCodeBuilder dbCodeBuilder = FetchSchemaCodes (namespaceArg, assemblyNameArg);
+				TruncOutput();
 
                 WriteMsg("Query and parse stored routines");
-                DataTable routines = QueryStoredRoutines();
-                List<StoredRoutineParser> parsers = new List<StoredRoutineParser>();
-                foreach (DataRow row in routines.Rows)
-                    parsers.Add(QueryRoutineCode(row["Type"].ToString(), row["Name"].ToString()));
+				List<StoredRoutineParser> parsers = FetchRoutineWrappers ();
                 TruncOutput();
 
                 WriteMsg("Build assembly");
-                ProxyCodeBuilder codeBuilder = new ProxyCodeBuilder(assemblyNameArg.Value, namespaceArg.Value, parsers.ToArray());
-                if (saveSourceArg.IsDefined)
-                    codeBuilder.SaveSource(Path.Combine(path, assemblyNameArg.Value + ".cs"));
+                ProxyCodeBuilder proxyCodeBuilder = new ProxyCodeBuilder(assemblyNameArg.Value, namespaceArg.Value, parsers.ToArray());
+				List<string> sourceCode = BuildSourceCode (dbCodeBuilder, proxyCodeBuilder);
 
-                ProxyAssemblyBuilder assemblyBuilder = new ProxyAssemblyBuilder(path, assemblyNameArg.Value, codeBuilder.CreateCode());
+				if (saveSourceArg.IsDefined)
+				{
+					dbCodeBuilder.SaveSource(Path.Combine(path, dbCodeBuilder.ClassName + ".cs"));
+					foreach (TableCodeBuilder codeBuilder in dbCodeBuilder.TableCodeBuilders)
+						codeBuilder.SaveSource(Path.Combine(path, codeBuilder.ClassName + ".cs"));
+                    proxyCodeBuilder.SaveSource(Path.Combine(path, assemblyNameArg.Value + ".cs"));
+				}
+			
+                ProxyAssemblyBuilder assemblyBuilder = new ProxyAssemblyBuilder(
+					path, 
+					assemblyNameArg.Value, 
+					sourceCode.ToArray()
+					);
                 assemblyBuilder.BuildToFile();
                 TruncOutput();
 

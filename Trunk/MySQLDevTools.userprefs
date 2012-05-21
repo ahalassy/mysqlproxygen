@@ -1,21 +1,19 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Core/Services/MySqlProxyGenCommand.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Core/Reflection/DataBaseCodeBuilder.cs">
     <Files>
-      <File FileName="Core/Reflection/ProxyAssemblyBuilder.cs" Line="87" Column="24" />
-      <File FileName="Core/Services/MySqlProxyGenCommand.cs" Line="266" Column="6" />
-      <File FileName="Sandbox/SchemaSandbox/Main.cs" Line="85" Column="4" />
+      <File FileName="Core/Reflection/ProxyCodeBuilder.cs" Line="108" Column="36" />
+      <File FileName="Core/Documents/StoredRoutineParser.cs" Line="136" Column="34" />
+      <File FileName="Core/Documents/Structs.cs" Line="193" Column="36" />
+      <File FileName="Core/Reflection/DataBaseCodeBuilder.cs" Line="46" Column="12" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True">
+        <State expanded="True" selected="True">
           <Node name="Sandbox" expanded="True">
-            <Node name="SchemaSandbox" expanded="True" />
-            <Node name="StoredProcedureSandbox" expanded="True">
-              <Node name="References" expanded="True" />
-            </Node>
+            <Node name="SampleGeneratedProxy" expanded="True" />
           </Node>
-          <Node name="Console Tool" expanded="True" selected="True">
+          <Node name="Console Tool" expanded="True">
             <Node name="References" expanded="True" />
           </Node>
           <Node name="Core" expanded="True">

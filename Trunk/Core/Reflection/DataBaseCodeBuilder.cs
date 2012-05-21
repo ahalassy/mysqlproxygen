@@ -29,6 +29,7 @@ namespace MySqlDevTools
 			"System",
 			"System.Data.Linq",
 			"System.Data.Linq.Mapping",
+			"MySql.Data.MySqlClient",
 			"DbLinq.Data.Linq",
 			"DbLinq.Data.Linq.Mapping",
 			"DataContext = DbLinq.MySql.MySqlDataContext"
@@ -58,13 +59,10 @@ namespace MySqlDevTools
 			"#region Static members"+ "\n" +
 			"private static {0} _database = null;" + "\n" +
 			""+ "\n" +
-			"private MySqlConnection _connection = null;" + "\n" +
-			""+ "\n" +
 			"public static {0} Database {{ get {{ return _database; }} }}" + "\n" +
 			""+ "\n" +
-			"public static Open(MySqlConnection connection)" + "\n" +
+			"public static void Open(MySqlConnection connection)" + "\n" +
 			"{{" + "\n" +
-			"\t_connection = connection;" + "\n" +
 			"\t_database = new {0}(connection);" + "\n" +
 			"}}" + "\n" +
 			"#endregion";

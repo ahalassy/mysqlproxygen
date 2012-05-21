@@ -211,9 +211,9 @@ namespace MySqlDevTools.Documents
 		{
 			foreach (RoutineParameterMapping mapping in SqlTypeNameMapping)
 				if (mapping.IsMatch(sqlType))
-					return mapping.Nullable ?
-						mapping.ClrType.FullName :
-						mapping.ClrType.FullName + "?";
+					return (!mapping.Nullable && nullable) ?
+						mapping.ClrType.FullName + "?" :
+						mapping.ClrType.FullName;
 
 			return typeof(object).FullName;
 		}

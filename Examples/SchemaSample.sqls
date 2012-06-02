@@ -1,0 +1,14 @@
+--database cs_schema
+
+#schema
+
+#ifdef schema.ac_mstr
+#message ac_mstr exists!
+
+#else
+#message ac_mstr not found!
+
+#endif
+
+--eof
+

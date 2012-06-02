@@ -1,20 +1,20 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Core/Services/DatabaseProvider.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Core/Documents/MySqlCodeDoc.cs">
     <Files>
-      <File FileName="Core/Services/MySqlPushCommand.cs" Line="52" Column="81" />
-      <File FileName="Core/Documents/MySqlCodeDoc.cs" Line="128" Column="72" />
-      <File FileName="Core/Services/DatabaseProvider.cs" Line="70" Column="9" />
+      <File FileName="Core/Services/MySqlPushCommand.cs" Line="50" Column="73" />
+      <File FileName="Core/Documents/MySqlCodeDoc.cs" Line="435" Column="24" />
+      <File FileName="Core/Services/DatabaseProvider.cs" Line="73" Column="43" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Sandbox" expanded="True" />
-          <Node name="Console Tool" selected="True" />
           <Node name="Core" expanded="True">
             <Node name="References" expanded="True" />
             <Node name="Documents" expanded="True">
               <Node name="Directives" expanded="True" />
+              <Node name="MySqlCodeDoc.cs" selected="True" />
             </Node>
             <Node name="Properties" expanded="True" />
             <Node name="Reflection" expanded="True" />
@@ -31,7 +31,7 @@
       </Pad>
       <Pad Id="MonoDevelop.Debugger.WatchPad">
         <State>
-          <Value>ProxyWrapper.Connection.State</Value>
+          <Value>_macros</Value>
         </State>
       </Pad>
     </Pads>

@@ -78,6 +78,7 @@
     <Compile Include="Documents\DataTableCodeDoc.cs" />
     <Compile Include="Reflection\TableCodeBuilder.cs" />
     <Compile Include="Reflection\DataBaseCodeBuilder.cs" />
+    <Compile Include="Services\DatabaseProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />

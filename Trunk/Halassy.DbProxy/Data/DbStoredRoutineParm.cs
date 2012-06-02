@@ -27,13 +27,24 @@ namespace Halassy.Data
 {
     public class DbStoredRoutineParm
     {
+        private object
+            _value = null;
+        
         public string Name { get; private set; }
 
         public string SqlName { get { return "@" + Name; } }
 
-        public object Value { get; internal set; }
+        public object Value 
+        { 
+            get { return DBNull.Value.Equals(_value) ? null : _value; }
+            internal set { _value = value; }
+        }
 
-        public Type ValueType { get; private set; }
+        public Type ValueType 
+        { 
+            get;
+            private set;
+        }
 
         public ParameterDirection Direction { get; private set; }
 

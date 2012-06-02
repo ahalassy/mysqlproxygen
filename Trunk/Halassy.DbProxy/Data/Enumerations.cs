@@ -23,7 +23,23 @@ using System.Text;
 
 namespace Halassy.Data
 {
-
+	#region public enum ProxySessionManagementMethod
+	/// <summary>
+	/// Proxy connection management method
+	/// </summary>
+	public enum ProxySessionManagementMethod
+	{
+		/// <summary>Session will opened and closed on demand</summary>
+		OnDemand,
+		
+		/// <summary>Session will opened when object constructed, and kept opened till dispose</summary>
+		Continous,
+		
+		/// <summary>Session state will be managed manually</summary>
+		Manual
+	}
+	#endregion
+	
     #region public enum CommandExecution
     /// <summary>SQL Command execute mode</summary>
     public enum CommandExecution

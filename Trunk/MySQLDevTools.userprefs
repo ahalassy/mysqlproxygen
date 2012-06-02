@@ -1,36 +1,40 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Core/Reflection/DataBaseCodeBuilder.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Halassy.DbProxy/Data/DbStoredRoutineParm.cs">
     <Files>
-      <File FileName="Core/Reflection/ProxyCodeBuilder.cs" Line="108" Column="36" />
-      <File FileName="Core/Documents/StoredRoutineParser.cs" Line="136" Column="34" />
-      <File FileName="Core/Documents/Structs.cs" Line="193" Column="36" />
-      <File FileName="Core/Reflection/DataBaseCodeBuilder.cs" Line="46" Column="12" />
+      <File FileName="Halassy.DbProxy/Data/DbStoredRoutineParm.cs" Line="40" Column="43" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True" selected="True">
-          <Node name="Sandbox" expanded="True">
-            <Node name="SampleGeneratedProxy" expanded="True" />
-          </Node>
+        <State expanded="True">
+          <Node name="Sandbox" expanded="True" />
           <Node name="Console Tool" expanded="True">
             <Node name="References" expanded="True" />
           </Node>
           <Node name="Core" expanded="True">
             <Node name="References" expanded="True" />
-            <Node name="Documents" expanded="True" />
+            <Node name="Documents" expanded="True">
+              <Node name="Directives" expanded="True" />
+            </Node>
             <Node name="Properties" expanded="True" />
             <Node name="Reflection" expanded="True" />
             <Node name="Services" expanded="True" />
           </Node>
           <Node name="Halassy.DbProxy" expanded="True">
             <Node name="References" expanded="True" />
-            <Node name="Data" expanded="True" />
+            <Node name="Data" expanded="True">
+              <Node name="DbStoredRoutineParm.cs" selected="True" />
+            </Node>
           </Node>
         </State>
       </Pad>
       <Pad Id="ClassPad">
         <State expanded="True" selected="True" />
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>ProxyWrapper.Connection.State</Value>
+        </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>

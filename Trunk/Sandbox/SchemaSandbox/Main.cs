@@ -17,13 +17,14 @@ using System;
 using System.Data;
 using System.IO;
 using System.Collections.Generic;
+using System.Text;
 
 using MySql.Data.MySqlClient;
 
 using MySqlDevTools.Documents;
 using MySqlDevTools;
 using MySqlDevTools.Reflection;
-using System.Text;
+
 
 namespace SchemaSandbox
 {
@@ -103,7 +104,7 @@ namespace SchemaSandbox
 				foreach (DataRow tableRow in Tables.Rows)
 				{
 					string tableName = tableRow [0] as string;
-					if (String.IsNullOrWhiteSpace(tableName))
+					if (String.IsNullOrEmpty(tableName))
 						continue;
 					WriteStatus(String.Format("Write code for table {0}", tableName));
 					QueryFieldInformation(tableName);

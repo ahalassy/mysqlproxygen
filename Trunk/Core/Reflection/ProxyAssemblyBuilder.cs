@@ -138,18 +138,20 @@ namespace MySqlDevTools.Reflection
 
         public void BuildToFile()
         {
-            CSharpCodeProvider codeProvider = new CSharpCodeProvider();
             CompilerParameters compilerParms = new CompilerParameters();
-
             compilerParms.OutputAssembly = Path.Combine(OutputPath, AssemblyName + ".dll");
             compilerParms.GenerateExecutable = false;
+            
+            Dictionary<string, string> providerOptions = new Dictionary<string, string>();
+            // providerOptions.Add("CompilerVersion", "3.5");
 
             foreach (string refasm in SystemReferences)
                 compilerParms.ReferencedAssemblies.Add(refasm);
 
             foreach (string refasm in CustomReferences)
                 compilerParms.ReferencedAssemblies.Add(Path.Combine(CustomAssemblyPath, refasm));
-			
+
+            CSharpCodeProvider codeProvider = new CSharpCodeProvider(providerOptions);
             CompilerResults result = codeProvider.CompileAssemblyFromSource(compilerParms, AssemblyCode);
             if (result.Errors.Count > 0)
                 throw CreateCompilerException(result);

@@ -1,14 +1,15 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Halassy.DbProxy/Data/DbStoredRoutineParm.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Core/Documents/MySqlCodeDoc.cs">
     <Files>
-      <File FileName="Halassy.DbProxy/Data/DbStoredRoutineParm.cs" Line="40" Column="43" />
+      <File FileName="Core/Services/MySqlPushCommand.cs" Line="52" Column="45" />
+      <File FileName="Core/Documents/MySqlCodeDoc.cs" Line="163" Column="10" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Sandbox" expanded="True" />
-          <Node name="Console Tool" expanded="True">
+          <Node name="Console Tool" expanded="True" selected="True">
             <Node name="References" expanded="True" />
           </Node>
           <Node name="Core" expanded="True">
@@ -22,9 +23,7 @@
           </Node>
           <Node name="Halassy.DbProxy" expanded="True">
             <Node name="References" expanded="True" />
-            <Node name="Data" expanded="True">
-              <Node name="DbStoredRoutineParm.cs" selected="True" />
-            </Node>
+            <Node name="Data" expanded="True" />
           </Node>
         </State>
       </Pad>

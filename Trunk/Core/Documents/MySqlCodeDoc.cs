@@ -166,6 +166,8 @@ namespace MySqlDevTools.Documents
         {
             try
             {
+                CodeWriter.WriteLine("START TRANSACTION;");
+                
                 OpenStackFrame();
 
                 string ln = null;
@@ -193,6 +195,7 @@ namespace MySqlDevTools.Documents
             finally
             {
                 CloseStackFrame();
+                CodeWriter.WriteLine("COMMIT;");
             }
         }
 
@@ -260,7 +263,7 @@ namespace MySqlDevTools.Documents
                 _macros.Clear();
                 CurrentReader = new StreamReader(FileName);
                 CodeWriter = new StringWriter();
-
+    
                 InternalProcessCode();
 
             }

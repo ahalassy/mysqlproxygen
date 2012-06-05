@@ -1,9 +1,6 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Halassy.DbProxy/Data/DbStoredRoutineParm.cs">
-    <Files>
-      <File FileName="Halassy.DbProxy/Data/DbStoredRoutineParm.cs" Line="40" Column="43" />
-    </Files>
+  <MonoDevelop.Ide.Workbench>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">

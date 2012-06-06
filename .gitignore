@@ -7,6 +7,6 @@ obj/
 *.cache
 *.suo
 *.pidb
-*.fuse_*
+*.fuse*
 
 # EOF

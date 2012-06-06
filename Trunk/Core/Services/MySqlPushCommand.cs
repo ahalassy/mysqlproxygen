@@ -1,4 +1,4 @@
-﻿#region Source information
+#region Source information
 
 //*****************************************************************************
 //

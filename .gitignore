@@ -6,5 +6,7 @@ obj/
 # Specific files:
 *.cache
 *.suo
+*.pidb
+*.fuse_*
 
 # EOF

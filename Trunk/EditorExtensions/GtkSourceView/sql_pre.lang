@@ -76,6 +76,10 @@
       <keyword>FLOAT|DOUBLE[ \t\n]+PRECISION|REAL</keyword>
     </context>
 
+    <context id="mysql-datatypes" style-ref="type">
+      <keyword>DATETIME</keyword>
+    </context>
+
     <context id="sql-ds-and-db2-datatypes" style-ref="type">
       <keyword>CHARACTER</keyword>
       <!-- FIXME no \n in patterns! -->
@@ -589,6 +593,7 @@
       <include>
         <context ref="oracle-built-in-datatypes"/>
         <context ref="ansi-datatypes"/>
+        <context ref="mysql-datatypes" />
         <context ref="sql-ds-and-db2-datatypes"/>
         <context ref="oracle-supplied-types"/>
         <context ref="text-literals"/>

@@ -1,4 +1,4 @@
-﻿#region Source information
+#region Source information
 
 //*****************************************************************************
 //
@@ -271,6 +271,8 @@ namespace MySqlDevTools.Documents
         
         public string Process()
         {
+            string result = "";
+            
             try
             {
                 MacroModel.CodeDocument = this;
@@ -299,14 +301,17 @@ namespace MySqlDevTools.Documents
             ValidateCode();
 
             if (ParentDoc == null && !SchemaDefinition)
-                return String.Format(
+                result = String.Format(
                     RoutineType == RoutineType.Function ?
                         "DROP FUNCTION IF EXISTS {0};\n\n{1}" : "DROP PROCEDURE IF EXISTS {0};\n\n{1}",
-                    RoutineName,
-                    CodeWriter.ToString()
-                    );
+                        RoutineName,
+                        CodeWriter.ToString()
+                        );
             else
-                return CodeWriter.ToString();
+                result = CodeWriter.ToString();
+   
+            return ParentDoc == null ? String.Format("START TRANSACTION;\n{0}\nCOMMIT;", result) : result;
+
         }
 
         public MySqlCodeDoc (string fileName, DatabaseProvider dbProvider)

@@ -28,24 +28,26 @@ using System.Reflection;
 namespace Halassy.Data
 {
     public class DbProxyClass : IDisposable
-    {    
+    {
+        private readonly object ReaderSemaphore = new object();
+
         private bool
             _externalConnection = false,
             _busy = false,
             _opened = false,
             _disposed = false;
 
-        private DbConnection 
+        private DbConnection
             _connection = null;
 
         public DbManagementObjectFactoryClass MgmtObjectFactory { get; private set; }
 
-        protected AutoResetEvent _connectionReleaseSemaphore = new AutoResetEvent (false);
+        protected AutoResetEvent _connectionReleaseSemaphore = new AutoResetEvent(false);
 
         protected DbConnection CurrentConnection { get { return _connection; } }
-   
+
         public bool ExternalConnection { get { return _externalConnection; } }
-   
+
         /// <summary>
         /// Gets a value indicating whether this <see cref="Halassy.Data.DbProxyClass"/> connection busy.
         /// </summary>
@@ -53,7 +55,7 @@ namespace Halassy.Data
         /// <c>true</c> if connection busy; otherwise, <c>false</c>.
         /// </value>
         public bool ConnectionBusy { get { return _busy; } }
-   
+
         /// <summary>
         /// Gets a value indicating whether this <see cref="Halassy.Data.DbProxyClass"/> is opened.
         /// </summary>
@@ -61,7 +63,7 @@ namespace Halassy.Data
         /// <c>true</c> if opened; otherwise, <c>false</c>.
         /// </value>
         public bool Opened { get { return _opened; } }
-   
+
         /// <summary>
         /// Gets or sets the connection string.
         /// </summary>
@@ -72,8 +74,13 @@ namespace Halassy.Data
 
         private object InternalExecuteSqlCommand(string sql, CommandExecution mode)
         {
-            DbCommand command = MgmtObjectFactory.CreateCommand(sql, CurrentConnection);
-            return InternalExecuteCommand(command, mode);
+            lock (ReaderSemaphore)
+            {
+                using (DbCommand command = MgmtObjectFactory.CreateCommand(sql, CurrentConnection))
+                {
+                    return InternalExecuteCommand(command, mode);
+                }
+            }
         }
 
         private object InternalExecuteCommand(DbCommand command, CommandExecution mode)
@@ -84,18 +91,18 @@ namespace Halassy.Data
 
                 switch (mode)
                 {
-                case CommandExecution.Query:
-                    return command.ExecuteReader();
+                    case CommandExecution.Query:
+                        return command.ExecuteReader();
 
-                case CommandExecution.Scalar:
-                    return command.ExecuteScalar();
+                    case CommandExecution.Scalar:
+                        return command.ExecuteScalar();
 
-                case CommandExecution.Command:
-                    command.ExecuteNonQuery();
-                    return null;
+                    case CommandExecution.Command:
+                        command.ExecuteNonQuery();
+                        return null;
 
-                default:
-                    return null;
+                    default:
+                        return null;
                 }
 
             }
@@ -126,7 +133,7 @@ namespace Halassy.Data
             _busy = false;
             _connectionReleaseSemaphore.Set();
         }
-   
+
         /// <summary>
         /// Executes the sql query and returns the result as a datatable
         /// </summary>
@@ -138,18 +145,24 @@ namespace Halassy.Data
         /// </param>
         public DataTable ExecuteSqlQuery(string sql)
         {
-            DbDataReader reader = InternalExecuteSqlCommand(sql, CommandExecution.Query) as DbDataReader;
-            DataTable result = new DataTable ();
-
-            if (reader != null)
+            lock (ReaderSemaphore)
             {
-                result.Load(reader);
-                reader.Close();
-            }
 
-            return result;
+                using (DbDataReader reader = InternalExecuteSqlCommand(sql, CommandExecution.Query) as DbDataReader)
+                {
+                    DataTable result = new DataTable();
+
+                    if (reader != null)
+                    {
+                        result.Load(reader);
+                        reader.Close();
+                    }
+
+                    return result;
+                }
+            }
         }
-   
+
         /// <summary>
         /// Executes the SQL statement, and returns a scalar value as result
         /// </summary>
@@ -163,7 +176,7 @@ namespace Halassy.Data
         {
             return InternalExecuteSqlCommand(sql, CommandExecution.Scalar);
         }
-   
+
         /// <summary>
         /// Executes the SQL statement and returns nothing
         /// </summary>
@@ -174,7 +187,7 @@ namespace Halassy.Data
         {
             InternalExecuteSqlCommand(sql, CommandExecution.Command);
         }
-   
+
         /// <summary>
         /// Runs the specified stored routine
         /// </summary>
@@ -183,32 +196,40 @@ namespace Halassy.Data
         /// <param name='parms'>Routine parameters</param>
         public DataTable RunProcedure(string name, DbStoredRoutineParmCollection parms)
         {
+            DbCommand command = null;
+
             try
             {
-              DbCommand command = MgmtObjectFactory.CreateCommand(
-                name,
-                CurrentConnection
-                );
-
-                command.CommandType = CommandType.StoredProcedure;
-                parms.FillParameters(command);
-                DbDataReader reader = InternalExecuteCommand(command, CommandExecution.Query) as DbDataReader;
-                DataTable result = new DataTable ();
-                if (reader != null)
+                lock (ReaderSemaphore)
                 {
-                    result.Load(reader);
-                    reader.Close();
-                }
-                parms.FetchParameters(command);
+                    command = MgmtObjectFactory.CreateCommand(name, CurrentConnection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    parms.FillParameters(command);
+                    using (DbDataReader reader = InternalExecuteCommand(command, CommandExecution.Query) as DbDataReader)
+                    {
+                        DataTable result = new DataTable();
+                        if (reader != null)
+                        {
+                            result.Load(reader);
+                            reader.Close();
+                        }
+                        parms.FetchParameters(command);
 
-                return result;
+                        return result;
+                    }
+                }
             }
             catch (Exception ex)
             {
-                throw new DbProxyException (name, parms, ex);
+                throw new DbProxyException(name, parms, ex);
+            }
+            finally
+            {
+                if (command != null)
+                    command.Dispose();
             }
         }
- 
+
         /// <summary>
         /// Calls the specified stored function.
         /// </summary>
@@ -216,15 +237,15 @@ namespace Halassy.Data
         /// <param name='parms'>Routine parameters</param>
         public void CallFunction(string name, DbStoredRoutineParmCollection parms)
         {
-            DbCommand command = MgmtObjectFactory.CreateCommand(
-                name,
-                CurrentConnection
-                );
-
-            parms.FillParameters(command);
-            InternalExecuteCommand(command, CommandExecution.Scalar);
-            parms.FetchParameters(command);
-
+            lock (ReaderSemaphore)
+            {
+                using (DbCommand command = MgmtObjectFactory.CreateCommand(name, CurrentConnection))
+                {
+                    parms.FillParameters(command);
+                    InternalExecuteCommand(command, CommandExecution.Scalar);
+                    parms.FetchParameters(command);
+                }
+            }
         }
 
         /// <summary>
@@ -236,8 +257,8 @@ namespace Halassy.Data
         public void OpenConnection()
         {
             if (Opened)
-                throw new InvalidOperationException ("Database connection already opened!");
-     
+                throw new InvalidOperationException("Database connection already opened!");
+
             if (ExternalConnection)
                 _connection.Open();
             else
@@ -245,10 +266,10 @@ namespace Halassy.Data
                 _connection = MgmtObjectFactory.CreateConnection(ConnectionString);
                 _connection.Open();
                 _opened = true;
-       
+
             }
         }
-   
+
         /// <summary>
         /// Closes the connection.
         /// </summary>
@@ -258,7 +279,7 @@ namespace Halassy.Data
         public void CloseConnection()
         {
             if (!Opened)
-                throw new InvalidOperationException ("There's no opened database connection!");
+                throw new InvalidOperationException("There's no opened database connection!");
             try
             {
                 if (ExternalConnection)
@@ -267,7 +288,7 @@ namespace Halassy.Data
                 {
                     _connection.Close();
                     _connection.Dispose();
-                    _connection = null;         
+                    _connection = null;
                 }
             }
             finally
@@ -275,7 +296,7 @@ namespace Halassy.Data
                 _opened = false;
             }
         }
-   
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Halassy.Data.DbProxyClass"/> class.
         /// </summary>
@@ -289,10 +310,10 @@ namespace Halassy.Data
         /// Is thrown when an explicit conversion (casting operation) fails because the source type cannot be converted to the
         /// destination type.
         /// </exception>
-        public DbProxyClass (string connectionString, Type mgmtObjFactoryType)
+        public DbProxyClass(string connectionString, Type mgmtObjFactoryType)
         {
             if (!typeof(DbManagementObjectFactoryClass).IsAssignableFrom(mgmtObjFactoryType))
-                throw new InvalidCastException (
+                throw new InvalidCastException(
                     String.Format(
                         "The shipped factory class type must be inherited from {0}!",
                         typeof(DbManagementObjectFactoryClass).FullName
@@ -306,7 +327,7 @@ namespace Halassy.Data
                 );
             this.MgmtObjectFactory = constructor.Invoke(new object[] { this }) as DbManagementObjectFactoryClass;
         }
-   
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Halassy.Data.DbProxyClass"/> class.
         /// </summary>
@@ -320,31 +341,31 @@ namespace Halassy.Data
         /// Is thrown when an explicit conversion (casting operation) fails because the source type cannot be converted to the
         /// destination type.
         /// </exception>
-        public DbProxyClass (DbConnection connection, Type mgmtObjFactoryType)
+        public DbProxyClass(DbConnection connection, Type mgmtObjFactoryType)
         {
             if (!typeof(DbManagementObjectFactoryClass).IsAssignableFrom(mgmtObjFactoryType))
-                throw new InvalidCastException (
+                throw new InvalidCastException(
                     String.Format(
                         "The shipped factory class type must be inherited from {0}!",
                         typeof(DbManagementObjectFactoryClass).FullName
                         )
                     );
-     
+
             _connection = connection;
             _externalConnection = true;
             _opened = connection.State != ConnectionState.Broken && connection.State != ConnectionState.Closed;
-      
+
             ConstructorInfo constructor = mgmtObjFactoryType.GetConstructor(
                 new Type[] { typeof(DbProxyClass) }
                 );
             this.MgmtObjectFactory = constructor.Invoke(new object[] { this }) as DbManagementObjectFactoryClass;
         }
-   
+
         /// <summary>
         /// Releases unmanaged resources and performs other cleanup operations before the
         /// <see cref="Halassy.Data.DbProxyClass"/> is reclaimed by garbage collection.
         /// </summary>
-        ~DbProxyClass ()
+        ~DbProxyClass()
         {
             if (!_disposed)
                 Dispose();

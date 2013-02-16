@@ -42,9 +42,18 @@ namespace MySqlDevTools.Services
                     fileNameArg = CommandLineArguments.GetArgument("-s", "--source");
 
 
-                string pattern = fileNameArg.IsDefined ? fileNameArg.Value : null;
+                string 
+					pattern = fileNameArg.IsDefined ? fileNameArg.Value : null,
+					path = Path.GetDirectoryName(pattern);
+				
+				if (String.IsNullOrEmpty(path))
+					path = ".";
+				
+				if (!Directory.Exists(path))
+					throw new DirectoryNotFoundException(String.Format("Path \"{0}\" not found", path));
+				
 
-                foreach (string fileName in Directory.GetFiles(Path.GetDirectoryName(pattern), Path.GetFileName(pattern)))
+                foreach (string fileName in Directory.GetFiles(path, Path.GetFileName(pattern)))
                 {
                     Console.Write("Pushing {0} ...   ", fileName);
 

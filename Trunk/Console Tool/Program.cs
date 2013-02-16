@@ -24,6 +24,7 @@ using System.Text;
 using MySqlDevTools.Config;
 using MySqlDevTools.Services;
 using MySqlDevTools.Documents;
+using System.Diagnostics;
 
 namespace MySqlDevTools
 {
@@ -32,6 +33,9 @@ namespace MySqlDevTools
 
         private static void Initialize()
         {
+            if (CommandLineArguments.IsDefined("--debug"))
+                Debugger.Launch();
+            
             CommandClass.Verbose =
                 PreprocessorDirective.Verbose = RuntimeConfig.IsVerbose;
 

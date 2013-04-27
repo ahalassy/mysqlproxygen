@@ -1,4 +1,4 @@
-﻿#region Source information
+#region Source information
 
 //*****************************************************************************
 //
@@ -25,15 +25,18 @@ using MySql.Data.MySqlClient;
 
 using MySqlDevTools.Documents;
 using MySqlDevTools.Config;
+using System.Data;
 
 
 namespace MySqlDevTools.Services
 {
     public class MySqlPushCommand : CommandClass
     {
+        private readonly List<TableBackupData> BackupData = new List<TableBackupData>();
+
         protected override bool CoreMethod()
         {
-            MySqlConnection connection = null;
+            DatabaseProvider dbProvider = null;
 
             try
             {
@@ -42,29 +45,32 @@ namespace MySqlDevTools.Services
                     fileNameArg = CommandLineArguments.GetArgument("-s", "--source");
 
 
-                string 
-					pattern = fileNameArg.IsDefined ? fileNameArg.Value : null,
-					path = Path.GetDirectoryName(pattern);
-				
-				if (String.IsNullOrEmpty(path))
-					path = ".";
-				
-				if (!Directory.Exists(path))
-					throw new DirectoryNotFoundException(String.Format("Path \"{0}\" not found", path));
-				
+                string
+                    pattern = fileNameArg.IsDefined ? fileNameArg.Value : null,
+                    path = Path.GetDirectoryName(pattern);
+
+                if (String.IsNullOrEmpty(path))
+                    path = ".";
+
+                if (!Directory.Exists(path))
+                    throw new DirectoryNotFoundException(String.Format("Path \"{0}\" not found", path));
+
 
                 foreach (string fileName in Directory.GetFiles(path, Path.GetFileName(pattern)))
                 {
                     Console.Write("Pushing {0} ...   ", fileName);
+                    dbProvider = new DatabaseProvider(cStringArg.Value);
 
-                    MySqlCodeDoc codeDoc = new MySqlCodeDoc(fileName);
+                    MySqlCodeDoc codeDoc = new MySqlCodeDoc(fileName, dbProvider);
                     string code = codeDoc.Process();
 
+                    BackupTables(dbProvider.Connection, codeDoc.GetBackupTables());
+
                     // Pushing code:
-                    connection = new MySqlConnection(cStringArg.Value);
-                    connection.Open();
-                    MySqlCommand command = new MySqlCommand(code, connection);
+                    MySqlCommand command = dbProvider.GetCommand(code);
                     command.ExecuteNonQuery();
+
+                    RestoreTables(dbProvider.Connection);
 
                     Console.WriteLine("ok.");
 
@@ -79,13 +85,44 @@ namespace MySqlDevTools.Services
             }
             finally
             {
-                if (connection != null
-                    && (connection.State == global::System.Data.ConnectionState.Closed
-                        || connection.State == global::System.Data.ConnectionState.Broken
-                    )
-                    )
-                    connection.Close();
+                if (dbProvider != null)
+                    dbProvider.Dispose();
+            }
+        }
 
+        private void ClearBackup()
+        {
+            foreach (TableBackupData backup in BackupData)
+                backup.Clear();
+
+            BackupData.Clear();
+        }
+
+        private void RestoreTables(MySqlConnection connection)
+        {
+            try
+            {
+                foreach (TableBackupData backup in BackupData)
+                    backup.RestoreContent(connection);
+
+            }
+            finally
+            {
+                ClearBackup();
+            }
+        }
+
+        private void BackupTables(MySqlConnection connection, string[] tables)
+        {
+            ClearBackup();
+
+            foreach (string table in tables)
+            {
+                TableBackupData backup = new TableBackupData(table);
+                if (!backup.IsTableExists(connection)) continue;
+
+                backup.BackupContent(connection);
+                BackupData.Add(backup);
             }
         }
 

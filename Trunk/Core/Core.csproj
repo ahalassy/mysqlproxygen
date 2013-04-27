@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{12F5AF72-9E04-408C-A44A-91F2DC6BA10F}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="AssemblyCompilerException.cs" />
     <Compile Include="Config\ParameterFile.cs" />
+    <Compile Include="Documents\Directives\BackupDirective.cs" />
     <Compile Include="Documents\Directives\ConditionalDirectives.cs" />
     <Compile Include="Documents\Directives\MessageDirective.cs" />
     <Compile Include="Documents\Enumerations.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Reflection\ProxyCodeBuilder.cs" />
     <Compile Include="Reflection\StoredRoutineInfo.cs" />
     <Compile Include="Services\CodeProcessException.cs" />
+    <Compile Include="Services\TableBackupData.cs" />
     <Compile Include="System\OutputWriter.cs" />
     <Compile Include="System\Reflection\TypeExtensions.cs" />
     <Compile Include="Services\CommandClass.cs" />
@@ -97,7 +99,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <Folder Include="IO\" />
-  </ItemGroup>
 </Project>

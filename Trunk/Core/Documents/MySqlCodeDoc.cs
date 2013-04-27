@@ -60,10 +60,10 @@ namespace MySqlDevTools.Documents
 
         private string
             _routineName = null;
-  
+
         private readonly DatabaseProvider
             _dbProvider;
-        
+
         private List<MySqlMacro> _macros = new List<MySqlMacro>();
 
         private MySqlMacroModel _macroModel = new MySqlMacroModel();
@@ -71,9 +71,9 @@ namespace MySqlDevTools.Documents
         private List<ProcessStackFrame> _stack = new List<ProcessStackFrame>();
 
         private StreamReader CurrentReader { get; set; }
-  
+
         public DatabaseProvider DbProvider { get { return _dbProvider; } }
-        
+
         public bool SchemaDefinition { get; private set; }
 
         public string FileName { get; private set; }
@@ -91,6 +91,8 @@ namespace MySqlDevTools.Documents
         internal int CurrentLine { get { return _currentLine; } }
 
         internal string WorkingDir { get { return Path.GetDirectoryName(FileName); } }
+
+        private readonly List<string> TablesToBackup = new List<string>();
 
         private StringWriter CodeWriter { get; set; }
 
@@ -139,6 +141,8 @@ namespace MySqlDevTools.Documents
             _macroModel.RegisterDirective("include", typeof(EndIfDirective), new EventHandler(ehProcessInclude));
 
             _macroModel.RegisterDirective("schema", typeof(PreprocessorDirective), new EventHandler(ehSchemaMarker));
+
+            _macroModel.RegisterDirective("backup", typeof(BackupDirective), new EventHandler(ehBackupTable));
 
         }
 
@@ -257,7 +261,7 @@ namespace MySqlDevTools.Documents
                     );
 
         }
-  
+
         private void ResetMacros()
         {
             _macros.Clear();
@@ -268,7 +272,12 @@ namespace MySqlDevTools.Documents
                     DefineMacro(String.Format("schema.{0}", table), table);
             }
         }
-        
+
+        public string[] GetBackupTables()
+        {
+            return TablesToBackup.ToArray();
+        }
+
         public string Process()
         {
             string result = "";
@@ -315,12 +324,12 @@ namespace MySqlDevTools.Documents
 
         }
 
-        public MySqlCodeDoc (string fileName, DatabaseProvider dbProvider)
+        public MySqlCodeDoc(string fileName, DatabaseProvider dbProvider)
         {
             _dbProvider = dbProvider;
-            
+
             InitializeDom();
-            
+
             this.FileName = PathExtensions.NormalizePath(fileName);
         }
 
@@ -445,8 +454,8 @@ namespace MySqlDevTools.Documents
                 return;
 
             string targetPath = PathExtensions.NormalizePath(directive.Arguments);
-         
-            MySqlCodeDoc codeDoc = new MySqlCodeDoc (Path.Combine(WorkingDir, targetPath), DbProvider);
+
+            MySqlCodeDoc codeDoc = new MySqlCodeDoc(Path.Combine(WorkingDir, targetPath), DbProvider);
             codeDoc.ParentDoc = this;
             CodeWriter.WriteLine(codeDoc.Process());
         }
@@ -457,6 +466,15 @@ namespace MySqlDevTools.Documents
                 throw new Exception("Schema defintion marker must be the first preprocessor directive!");
 
             SchemaDefinition = true;
+        }
+
+        private void ehBackupTable(object sender, EventArgs args)
+        {
+            BackupDirective directive = sender as BackupDirective;
+            if (directive == null) return;
+
+            if (!TablesToBackup.Contains(directive.TableName))
+                TablesToBackup.Add(directive.TableName);
         }
 
     }

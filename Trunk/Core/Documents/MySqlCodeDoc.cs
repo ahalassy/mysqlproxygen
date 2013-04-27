@@ -1,4 +1,4 @@
-#region Source information
+﻿#region Source information
 
 //*****************************************************************************
 //
@@ -27,31 +27,31 @@ namespace MySqlDevTools.Documents
 {
     public class MySqlCodeDoc
     {
-        #region public class ProcessStackFrame       
+        #region public class ProcessStackFrame
         public class ProcessStackFrame
         {
             public bool WasFullfilledBranch { get; set; }
 
             public bool Ignore { get; set; }
 
-            public ProcessStackFrame ()
+            public ProcessStackFrame()
             {
                 this.WasFullfilledBranch = false;
                 this.Ignore = false;
             }
 
         }
-     
-     #endregion
+
+        #endregion
 
         public static bool IsPreprocessorDirective(string ln)
         {
             if (String.IsNullOrEmpty(ln) || String.IsNullOrEmpty(ln.TrimStart()))
                 return false;
 
-            return ln.TrimStart() [0] == '#';
+            return ln.TrimStart()[0] == '#';
         }
-     
+
         private bool
             _wasDirective = false;
 
@@ -64,11 +64,11 @@ namespace MySqlDevTools.Documents
         private readonly DatabaseProvider
             _dbProvider;
         
-        private List<MySqlMacro> _macros = new List<MySqlMacro> ();
+        private List<MySqlMacro> _macros = new List<MySqlMacro>();
 
-        private MySqlMacroModel _macroModel = new MySqlMacroModel ();
+        private MySqlMacroModel _macroModel = new MySqlMacroModel();
 
-        private List<ProcessStackFrame> _stack = new List<ProcessStackFrame> ();
+        private List<ProcessStackFrame> _stack = new List<ProcessStackFrame>();
 
         private StreamReader CurrentReader { get; set; }
   
@@ -82,7 +82,7 @@ namespace MySqlDevTools.Documents
 
         public MySqlMacroModel MacroModel { get { return _macroModel; } }
 
-        public ProcessStackFrame TopFrame { get { return _stack [_stack.Count - 1]; } }
+        public ProcessStackFrame TopFrame { get { return _stack[_stack.Count - 1]; } }
 
         public MySqlCodeDoc ParentDoc { get; private set; }
 
@@ -96,7 +96,7 @@ namespace MySqlDevTools.Documents
 
         private void OpenStackFrame()
         {
-            _stack.Add(new ProcessStackFrame ());
+            _stack.Add(new ProcessStackFrame());
         }
 
         private void CloseStackFrame()
@@ -123,22 +123,22 @@ namespace MySqlDevTools.Documents
 
         private void InitializeDom()
         {
-            _macroModel.RegisterDirective("define", typeof(MacroDirective), new EventHandler (ehProcessMacro));
+            _macroModel.RegisterDirective("define", typeof(MacroDirective), new EventHandler(ehProcessMacro));
 
-            _macroModel.RegisterDirective("message", typeof(MessageDirective), new EventHandler (ehProcessMessage));
-            _macroModel.RegisterDirective("warning", typeof(WarningDirective), new EventHandler (ehProcessMessage));
-            _macroModel.RegisterDirective("error", typeof(ErrorDirective), new EventHandler (ehProcessMessage));
+            _macroModel.RegisterDirective("message", typeof(MessageDirective), new EventHandler(ehProcessMessage));
+            _macroModel.RegisterDirective("warning", typeof(WarningDirective), new EventHandler(ehProcessMessage));
+            _macroModel.RegisterDirective("error", typeof(ErrorDirective), new EventHandler(ehProcessMessage));
 
-            _macroModel.RegisterDirective("ifdef", typeof(IfDefinedDirective), new EventHandler (ehProcessIfDefined));
-            _macroModel.RegisterDirective("ifndef", typeof(IfNotDefineDirective), new EventHandler (ehProcessIfNotDefined));
-            _macroModel.RegisterDirective("else", typeof(ElseDirective), new EventHandler (ehProcessElseDefined));
-            _macroModel.RegisterDirective("elif", typeof(ElseIfDefinedDirective), new EventHandler (ehProcessElseIfDefined));
-            _macroModel.RegisterDirective("elifndef", typeof(ElseIfNotDefinedDirective), new EventHandler (ehProcessElseIfNotDefined));
-            _macroModel.RegisterDirective("endif", typeof(EndIfDirective), new EventHandler (ehProcessEndIfDefined));
+            _macroModel.RegisterDirective("ifdef", typeof(IfDefinedDirective), new EventHandler(ehProcessIfDefined));
+            _macroModel.RegisterDirective("ifndef", typeof(IfNotDefineDirective), new EventHandler(ehProcessIfNotDefined));
+            _macroModel.RegisterDirective("else", typeof(ElseDirective), new EventHandler(ehProcessElseDefined));
+            _macroModel.RegisterDirective("elif", typeof(ElseIfDefinedDirective), new EventHandler(ehProcessElseIfDefined));
+            _macroModel.RegisterDirective("elifndef", typeof(ElseIfNotDefinedDirective), new EventHandler(ehProcessElseIfNotDefined));
+            _macroModel.RegisterDirective("endif", typeof(EndIfDirective), new EventHandler(ehProcessEndIfDefined));
 
-            _macroModel.RegisterDirective("include", typeof(EndIfDirective), new EventHandler (ehProcessInclude));
+            _macroModel.RegisterDirective("include", typeof(EndIfDirective), new EventHandler(ehProcessInclude));
 
-            _macroModel.RegisterDirective("schema", typeof(PreprocessorDirective), new EventHandler (ehSchemaMarker));
+            _macroModel.RegisterDirective("schema", typeof(PreprocessorDirective), new EventHandler(ehSchemaMarker));
 
         }
 
@@ -147,14 +147,14 @@ namespace MySqlDevTools.Documents
             if (ParentDoc != null)
                 ParentDoc.DefineMacro(name, content);
             else
-                _macros.Add(new MySqlMacro (name, content));
+                _macros.Add(new MySqlMacro(name, content));
         }
 
         private void DefineMacro(MacroDirective directive)
         {
             DefineMacro(directive.MacroName, directive.MacroContent);
         }
-        
+
         private string ApplyMacros(string ln)
         {
             if (ParentDoc != null)
@@ -182,12 +182,12 @@ namespace MySqlDevTools.Documents
                         _wasDirective = true;
                     }
                     else
-                    if (!TopFrame.Ignore)
-                    {
-                        ln = ApplyMacros(ln);
-                        if (!String.IsNullOrEmpty(ln))
-                            CodeWriter.WriteLine(ln);
-                    }
+                        if (!TopFrame.Ignore)
+                        {
+                            ln = ApplyMacros(ln);
+                            if (!String.IsNullOrEmpty(ln))
+                                CodeWriter.WriteLine(ln);
+                        }
 
                     _currentLine++;
                 }
@@ -217,7 +217,7 @@ namespace MySqlDevTools.Documents
             int defPos = code.ToUpper().IndexOf("CREATE");
 
             if (defPos < 0)
-                throw new Exception ("Source must contain \"CREATE PROCEDURE <proc_name>\" or \"CREATE FUNCTION <func_name>\" phrase!");
+                throw new Exception("Source must contain \"CREATE PROCEDURE <proc_name>\" or \"CREATE FUNCTION <func_name>\" phrase!");
 
             int routinePos = code.ToUpper().IndexOf("FUNCTION", defPos);
             if (routinePos < 0)
@@ -226,15 +226,15 @@ namespace MySqlDevTools.Documents
                 RoutineType = RoutineType.Function;
 
             if (routinePos < 0)
-                throw new Exception ("Source must contain \"CREATE PROCEDURE <proc_name>\" or \"CREATE FUNCTION <func_name>\" phrase!");
+                throw new Exception("Source must contain \"CREATE PROCEDURE <proc_name>\" or \"CREATE FUNCTION <func_name>\" phrase!");
             else
-            if (RoutineType == RoutineType.Unknown)
-                RoutineType = RoutineType.Procedure;
+                if (RoutineType == RoutineType.Unknown)
+                    RoutineType = RoutineType.Procedure;
 
             int pos;
             for (pos = defPos + "CREATE".Length; pos < routinePos; pos++)
-                if (!whiteSpaces.Contains(code [pos]))
-                    throw new Exception ("Source must contain \"CREATE PROCEDURE <proc_name>\" or \"CREATE FUNCTION <func_name>\" phrase!");
+                if (!whiteSpaces.Contains(code[pos]))
+                    throw new Exception("Source must contain \"CREATE PROCEDURE <proc_name>\" or \"CREATE FUNCTION <func_name>\" phrase!");
 
             _routineName = "";
             pos += RoutineType == RoutineType.Procedure ? "PROCEDURE".Length : "FUNCTION".Length;
@@ -243,12 +243,12 @@ namespace MySqlDevTools.Documents
 
             while (code.Length > pos && (procNameChars.Contains(code[pos]) || procNameChars.ToUpper().Contains(code[pos])))
             {
-                _routineName += code [pos].ToString();
+                _routineName += code[pos].ToString();
                 pos++;
             }
 
             if (_routineName.ToUpper() != Path.GetFileNameWithoutExtension(FileName).ToUpper())
-                throw new Exception (
+                throw new Exception(
                     String.Format(
                         "Stored routine name \"{0}\" does not match file name {1}!",
                         _routineName,
@@ -272,15 +272,15 @@ namespace MySqlDevTools.Documents
         public string Process()
         {
             string result = "";
-            
+
             try
             {
                 MacroModel.CodeDocument = this;
                 SchemaDefinition = false;
                 _currentLine = 1;
                 ResetMacros();
-                CurrentReader = new StreamReader (FileName);
-                CodeWriter = new StringWriter ();
+                CurrentReader = new StreamReader(FileName);
+                CodeWriter = new StringWriter();
 
                 InternalProcessCode();
 
@@ -291,7 +291,7 @@ namespace MySqlDevTools.Documents
             }
             catch (Exception ex)
             {
-                throw new CodeProcessException (
+                throw new CodeProcessException(
                     Path.GetFileName(FileName),
                     CurrentLine,
                     ex
@@ -309,8 +309,9 @@ namespace MySqlDevTools.Documents
                         );
             else
                 result = CodeWriter.ToString();
-   
-            return ParentDoc == null ? String.Format("START TRANSACTION;\n{0}\nCOMMIT;", result) : result;
+
+            // return ParentDoc == null ? String.Format("START TRANSACTION;\n{0}\nCOMMIT;", result) : result;
+            return result;
 
         }
 
@@ -339,7 +340,7 @@ namespace MySqlDevTools.Documents
 
             MessageDirective directive = sender as MessageDirective;
             if (directive is ErrorDirective)
-                throw new Exception (String.Format("Explicit error: \"{0}\"", directive.Arguments));
+                throw new Exception(String.Format("Explicit error: \"{0}\"", directive.Arguments));
 
             if (directive is WarningDirective)
             {
@@ -442,7 +443,7 @@ namespace MySqlDevTools.Documents
             PreprocessorDirective directive = sender as PreprocessorDirective;
             if (directive == null)
                 return;
-         
+
             string targetPath = PathExtensions.NormalizePath(directive.Arguments);
          
             MySqlCodeDoc codeDoc = new MySqlCodeDoc (Path.Combine(WorkingDir, targetPath), DbProvider);
@@ -453,7 +454,7 @@ namespace MySqlDevTools.Documents
         private void ehSchemaMarker(object sender, EventArgs args)
         {
             if (_wasDirective)
-                throw new Exception ("Schema defintion marker must be the first preprocessor directive!");
+                throw new Exception("Schema defintion marker must be the first preprocessor directive!");
 
             SchemaDefinition = true;
         }

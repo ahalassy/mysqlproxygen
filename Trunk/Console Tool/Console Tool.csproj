@@ -21,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Commandlineparameters>push --pf /mnt/media/Repo/MySqlProxyGen.Net/Examples/Push.pf --source /mnt/media/Repo/MySqlProxyGen.Net/Examples/SchemaSample.sqls</Commandlineparameters>
+    <Commandlineparameters>proxygen --pf /mnt/media/Repo/tools/cs-tools.linux/proxygen-admin.script</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

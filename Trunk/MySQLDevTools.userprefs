@@ -1,32 +1,34 @@
-<Properties>
+﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Halassy.DbProxy/Data/DbProxyException.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Core/Services/MySqlPushCommand.cs">
     <Files>
-      <File FileName="Halassy.DbProxy/Data/DbProxyClass.cs" Line="208" Column="39" />
-      <File FileName="Halassy.DbProxy/Data/DbProxyException.cs" Line="29" Column="64" />
+      <File FileName="Core/Services/MySqlPushCommand.cs" Line="59" Column="6" />
+      <File FileName="Core/Documents/MySqlCodeDoc.cs" Line="200" Column="36" />
+      <File FileName="Core/Services/CommandClass.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="Sandbox" expanded="True" />
           <Node name="Console Tool" expanded="True" />
           <Node name="Core" expanded="True">
-            <Node name="Reflection" expanded="True" />
+            <Node name="References" expanded="True" />
+            <Node name="Documents" expanded="True" />
+            <Node name="Services" expanded="True">
+              <Node name="MySqlPushCommand.cs" selected="True" />
+            </Node>
           </Node>
           <Node name="Halassy.DbProxy" expanded="True">
             <Node name="References" expanded="True" />
-            <Node name="Data" expanded="True">
-              <Node name="DbProxyException.cs" selected="True" />
-            </Node>
+            <Node name="Data" expanded="True" />
           </Node>
         </State>
       </Pad>
       <Pad Id="ClassPad">
-        <State expanded="True" selected="True" />
+        <State selected="True" />
       </Pad>
       <Pad Id="MonoDevelop.Debugger.WatchPad">
         <State>
-          <Value>ProxyWrapper.Connection.State</Value>
+          <Value>line</Value>
         </State>
       </Pad>
     </Pads>

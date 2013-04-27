@@ -77,6 +77,7 @@
     </context>
 
     <context id="mysql-datatypes" style-ref="type">
+      <keyword>SIGNED|UNSIGNED</keyword>
       <keyword>DATETIME</keyword>
     </context>
 
@@ -350,6 +351,10 @@
       <keyword>VALUE</keyword>
     </context>
 
+    <context id="mysql-functions" style-ref="function">
+      <keyword>UUID</keyword>
+    </context>
+
     <context id="model-functions" style-ref="function">
       <keyword>CV</keyword>
       <keyword>ITERATION_NUMBER</keyword>
@@ -358,12 +363,16 @@
     </context>
 
     <context id="mysql-reserved-words" style-ref="keyword">
+      <keyword>BEFORE</keyword>
       <keyword>BEGIN</keyword>
       <keyword>DECLARE</keyword>
+      <keyword>EACH</keyword>
       <keyword>IF</keyword>
+      <keyword>KEY</keyword>
       <keyword>LEAVE</keyword>
       <keyword>LIMIT</keyword>
       <keyword>OUT</keyword>
+      <keyword>PRIMARY</keyword>
       <keyword>PROCEDURE</keyword>
     </context>
     
@@ -388,6 +397,7 @@
       <keyword>DISTINCT</keyword>
       <keyword>DROP</keyword>
       <keyword>ELSE</keyword>
+      <keyword>ELSEIF</keyword>
       <keyword>END</keyword>
       <keyword>FLOAT</keyword>
       <keyword>FOR</keyword>
@@ -623,6 +633,7 @@
         <context ref="analytic-functions"/>
         <context ref="object-reference-functions"/>
         <context ref="model-functions"/>
+        <context ref="mysql-functions"/>
         <context ref="mysql-reserved-words"/>
         <context ref="ansi-reserved-words"/>
         <context ref="oracle-reserved-words"/>

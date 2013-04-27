@@ -40,16 +40,16 @@ namespace MySqlDevTools.Reflection
                 string asmPath = Path.GetDirectoryName(
                     Assembly.GetExecutingAssembly().GetName().CodeBase
                     );
-				
-				switch (Environment.OSVersion.Platform) 
-				{
-					case PlatformID.MacOSX:
-					case PlatformID.Unix:
-						return String.IsNullOrEmpty(asmPath) ? "" : asmPath.Replace("file:", "");
-				
-					default:
-						return String.IsNullOrEmpty(asmPath) ? "" : asmPath.Replace("file:\\", "");
-				}
+
+                switch (Environment.OSVersion.Platform)
+                {
+                    case PlatformID.MacOSX:
+                    case PlatformID.Unix:
+                        return String.IsNullOrEmpty(asmPath) ? "" : asmPath.Replace("file:", "");
+
+                    default:
+                        return String.IsNullOrEmpty(asmPath) ? "" : asmPath.Replace("file:\\", "");
+                }
             }
         }
 
@@ -63,6 +63,7 @@ namespace MySqlDevTools.Reflection
 
         private string[] SystemReferences = new string[] {
             "System.dll",
+            "System.Core.dll",
             "System.Data.dll",
             "System.Data.Linq.dll",
             "System.Xml.dll"
@@ -78,9 +79,9 @@ namespace MySqlDevTools.Reflection
         private string
             _name,
             _path;
-		
-		private string[]
-			_codes;
+
+        private string[]
+            _codes;
 
         public string AssemblyName { get { return _name; } }
 
@@ -141,9 +142,9 @@ namespace MySqlDevTools.Reflection
             CompilerParameters compilerParms = new CompilerParameters();
             compilerParms.OutputAssembly = Path.Combine(OutputPath, AssemblyName + ".dll");
             compilerParms.GenerateExecutable = false;
-            
+
             Dictionary<string, string> providerOptions = new Dictionary<string, string>();
-            // providerOptions.Add("CompilerVersion", "3.5");
+            providerOptions.Add("CompilerVersion", "v3.5");
 
             foreach (string refasm in SystemReferences)
                 compilerParms.ReferencedAssemblies.Add(refasm);
@@ -152,6 +153,7 @@ namespace MySqlDevTools.Reflection
                 compilerParms.ReferencedAssemblies.Add(Path.Combine(CustomAssemblyPath, refasm));
 
             CSharpCodeProvider codeProvider = new CSharpCodeProvider(providerOptions);
+            
             CompilerResults result = codeProvider.CompileAssemblyFromSource(compilerParms, AssemblyCode);
             if (result.Errors.Count > 0)
                 throw CreateCompilerException(result);

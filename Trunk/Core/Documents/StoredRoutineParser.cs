@@ -26,6 +26,52 @@ namespace MySqlDevTools.Documents
 {
     public class StoredRoutineParser
     {
+        private static string ExtractParameter(ref string parms)
+        {
+            string result = "";
+            if (!parms.Contains(','))
+            {
+                result = parms;
+                parms = "";
+                return result;
+            }
+
+            /* Meg kell nézni, hogy van-e a vessző előtt nyitó zárójel. Ha van, akkor a
+             *      paraméter vége a záró zárójelet követő első vessző, vagy ha ott már
+             *      nincs vessző, akkor a sztring végééig
+             */
+
+            int
+                commaPos = parms.IndexOf(','),
+                bracketPos = parms.IndexOf('(');
+
+            if (bracketPos < commaPos)
+            {
+                bracketPos = parms.IndexOf(')', bracketPos);
+                commaPos = parms.IndexOf(',', bracketPos);
+
+                if (commaPos < 0)
+                {
+                    result = parms.Substring(0, parms.IndexOf('('));
+                    parms = "";
+                    return result;
+                }
+                else
+                {
+                    result = parms.Substring(0, parms.IndexOf('('));
+                    parms = parms.Substring(commaPos + 1);
+                }
+            }
+            else
+            {
+                result = parms.Substring(0, commaPos);
+                parms = parms.Substring(commaPos + 1);
+            }
+
+            return result;
+
+        }
+
         private string
             _sqlCode,
             _name;
@@ -77,18 +123,11 @@ namespace MySqlDevTools.Documents
         private void Parse()
         {
             Parameters.Clear();
-
             string parms = GetParameterList();
 
             while (!String.IsNullOrEmpty(parms))
             {
-                int sepPos = parms.IndexOf(',');
-                string parmCode = sepPos < 0 ?
-                    parms : parms.Substring(0, sepPos);
-                parmCode = parmCode.Trim();
-                parms = sepPos < 0 ?
-                    null : parms.Substring(sepPos + 1);
-
+                string parmCode = ExtractParameter(ref parms);
                 RoutineParameter parm = new RoutineParameter(parmCode);
                 Parameters.Add(parm);
             }
@@ -112,7 +151,7 @@ namespace MySqlDevTools.Documents
             foreach (RoutineParameter parm in Parameters)
                 codeWriter.WriteLine(
                     parm.ParameterDirection == global::System.Data.ParameterDirection.Output ?
-                        "\tparms.Add(ParameterDirection.{0}, \"{1}\", typeof({2}));": 
+                        "\tparms.Add(ParameterDirection.{0}, \"{1}\", typeof({2}));" :
                         "\tparms.Add(ParameterDirection.{0}, \"{1}\", {1});",
                     parm.ParameterDirection,
                     parm.Name,
